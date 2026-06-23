@@ -1,0 +1,16 @@
+{
+"name": "Cotizador de Placas",
+"short_name": "Cotizador",
+"start_url": "./index.html",
+"display": "standalone",
+"background_color": "#f4f6f9",
+"theme_color": "#007bff",
+"orientation": "portrait",
+"icons": [
+    {
+    "src": "https://cdn-icons-png.flaticon.com/512/2311/2311993.png",
+    "sizes": "512x512",
+    "type": "image/png"
+    }
+]
+}

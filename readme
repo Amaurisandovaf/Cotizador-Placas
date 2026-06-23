@@ -16,11 +16,14 @@
         select:focus, input:focus { border-color: #007bff; }
         .row { display: flex; gap: 10px; }
         .row div { flex: 1; }
-        button { width: 100%; background-color: #007bff; color: white; border: none; padding: 14px; border-radius: 8px; font-size: 18px; font-weight: bold; margin-top: 20px; cursor: pointer; }
-        button:active { background-color: #0056b3; }
+        .btn-calc { width: 100%; background-color: #007bff; color: white; border: none; padding: 14px; border-radius: 8px; font-size: 18px; font-weight: bold; margin-top: 20px; cursor: pointer; }
+        .btn-calc:active { background-color: #0056b3; }
+        .btn-excel { width: 100%; background-color: #28a745; color: white; border: none; padding: 14px; border-radius: 8px; font-size: 16px; font-weight: bold; margin-top: 12px; cursor: pointer; display: none; }
+        .btn-excel:active { background-color: #1e7e34; }
         .results { margin-top: 20px; background: #e9ecef; padding: 15px; border-radius: 8px; display: none; }
         .results p { margin: 8px 0; font-size: 16px; color: #333; }
-        .highlight { font-weight: bold; color: #28a745; font-size: 18px; }
+        .highlight { font-weight: bold; color: #007bff; font-size: 18px; }
+        .highlight-round { font-weight: bold; color: #28a745; font-size: 20px; }
     </style>
 </head>
 <body>
@@ -59,19 +62,25 @@
         </div>
     </div>
 
-    <button onclick="calcularCotizacion()">Calcular Precio</button>
+    <button class="btn-calc" onclick="calcularCotizacion()">Calcular Precio</button>
 
     <div id="results" class="results">
         <p>Área Solicitada: <span id="resArea" style="font-weight:bold;">0</span> m²</p>
-        <p>Precio al Público (x2): <span id="resPrecio" class="highlight">$0.00</span></p>
+        <p>Precio Exacto (x2): <span id="resPrecio" class="highlight">$0.00</span></p>
+        <p>Con Redondeo: <span id="resRedondeado" class="highlight-round">$0.00</span></p>
+        
+        <button class="btn-excel" id="btnExcel" onclick="descargarExcel()">Descargar Nota Excel</button>
     </div>
 </div>
 
 <script>
     const AREA_HOJA_ESTANDAR = 3.721; 
+    let datosUltimaCotizacion = null;
 
     function calcularCotizacion() {
-        const precioHoja = parseFloat(document.getElementById('placa').value);
+        const selectPlaca = document.getElementById('placa');
+        const nombrePlaca = selectPlaca.options[selectPlaca.selectedIndex].text.split(' ($')[0];
+        const precioHoja = parseFloat(selectPlaca.value);
         const largo = parseFloat(document.getElementById('largo').value);
         const ancho = parseFloat(document.getElementById('ancho').value);
 
@@ -83,16 +92,53 @@
         const areaCliente = largo * ancho;
         const costoBasePieza = (precioHoja / AREA_HOJA_ESTANDAR) * areaCliente;
         const precioFinal = costoBasePieza * 2;
+        const precioRedondeado = Math.round(precioFinal);
 
         document.getElementById('resArea').innerText = areaCliente.toFixed(3);
-        // Esto le vuelve a poner las comas visuales de miles y pesos solo al mostrar el resultado en pantalla
         document.getElementById('resPrecio').innerText = "$" + precioFinal.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        document.getElementById('resRedondeado').innerText = "$" + precioRedondeado.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2});
         
+        datosUltimaCotizacion = {
+            concepto: "Placa de " + nombrePlaca,
+            largo: largo.toFixed(2) + " m",
+            ancho: ancho.toFixed(2) + " m",
+            area: areaCliente.toFixed(3) + " m2",
+            precioExacto: precioFinal.toFixed(2),
+            precioRedondeado: precioRedondeado
+        };
+
         document.getElementById('results').style.display = 'block';
+        document.getElementById('btnExcel').style.display = 'block';
     }
 
     function limpiarResultados() {
         document.getElementById('results').style.display = 'none';
+        document.getElementById('btnExcel').style.display = 'none';
+    }
+
+    function descargarExcel() {
+        if (!datosUltimaCotizacion) return;
+
+        // Formato CSV compatible con Excel en Español (usando punto y coma ';')
+        let csvContent = "\uFEFF"; 
+        csvContent += "NOTA DE COTIZACIÓN\n";
+        csvContent += "Fecha:;" + new Date().toLocaleDateString('es-MX') + "\n\n";
+        
+        csvContent += "Concepto;Largo;Ancho;Área Total;Precio Exacto;Total Redondeado\n";
+        csvContent += `${datosUltimaCotizacion.concepto};${datosUltimaCotizacion.largo};${datosUltimaCotizacion.ancho};${datosUltimaCotizacion.area};$${datosUltimaCotizacion.precioExacto};$${datosUltimaCotizacion.precioRedondeado}\n\n`;
+        
+        csvContent += ";;;;TOTAL A PAGAR:;$" + datosUltimaCotizacion.precioRedondeado + "\n";
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        
+        link.setAttribute("href", url);
+        link.setAttribute("download", `Cotizacion_${Date.now()}.csv`);
+        document.body.appendChild(link);
+        
+        link.click();
+        document.body.removeChild(link);
     }
 
     if ('serviceWorker' in navigator) {

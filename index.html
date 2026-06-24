@@ -34,7 +34,7 @@
         .results { margin-top: 25px; background: #e9ecef; padding: 15px; border-radius: 8px; display: none; width: 100%; }
 
         /* Contenedor del Logo SVG de Torneria JRM */
-        .logo-container { display: flex; align-items: center; justify-content: center; width: 100%; max-width: 250px; margin: 0 auto 15px; padding: 5px; }
+        .logo-container { display: flex; align-items: center; justify-content: center; width: 100%; max-width: 260px; margin: 0 auto 15px; padding: 5px; }
         .logo-container svg { width: 100%; height: auto; display: block; }
 
         /* ====== ESTILO DEL TICKET DE COTIZACIÓN (SCREENSHOT) ====== */
@@ -54,17 +54,25 @@
 <body>
 
 <div class="card">
+    <!-- NUEVO LOGO FIEL A LA IMAGEN_E860C3.PNG -->
     <div class="logo-container">
-        <svg viewBox="0 0 280 80" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 280 85" xmlns="http://www.w3.org/2000/svg">
             <g transform="translate(5, 5)">
-                <polygon points="20,25 45,10 70,25 45,40" fill="#802670" opacity="0.85"/>
-                <polygon points="45,40 70,25 70,45 45,60" fill="#9e377a" opacity="0.9"/>
-                <polygon points="20,25 45,40 45,60 20,45" fill="#bd4b8c" opacity="0.85"/>
-                <polygon points="10,35 35,20 60,35 35,50" fill="#fab818" opacity="0.9"/>
-                <polygon points="35,50 60,35 60,55 35,70" fill="#f4931f" opacity="0.95"/>
-                <polygon points="10,35 35,50 35,70 10,55" fill="#e46c25" opacity="0.9"/>
+                <!-- Bloque Superior / Derecho (Tonos Violeta/Morado/Rosa) -->
+                <polygon points="35,5 55,16.5 35,28 15,16.5" fill="#802670" />
+                <polygon points="55,16.5 75,28 55,39.5 35,28" fill="#912f7c" />
+                <polygon points="75,28 75,51 55,39.5" fill="#a43988" />
+                <polygon points="55,39.5 75,51 55,62.5 35,51" fill="#b54293" />
+                <polygon points="35,28 55,39.5 35,51 15,39.5" fill="#6d1e5f" />
+                <polygon points="15,16.5 35,28 15,39.5" fill="#59164e" />
+                
+                <!-- Bloque Inferior / Izquierdo (Tonos Amarillo/Naranja) -->
+                <polygon points="15,39.5 35,51 15,62.5 15,39.5" fill="#fab818" />
+                <polygon points="35,51 55,62.5 35,74 15,62.5" fill="#f4931f" />
+                <polygon points="35,74 35,85 15,62.5" fill="#e46c25" />
+                <polygon points="35,74 55,62.5 35,85" fill="#d35a1a" />
             </g>
-            <text x="85" y="48" font-family="sans-serif" font-size="22" font-weight="normal" fill="#222222">Torneria JRM</text>
+            <text x="90" y="50" font-family="sans-serif" font-size="22" font-weight="normal" fill="#222222">Torneria JRM</text>
         </svg>
     </div>
     
@@ -110,17 +118,23 @@
 <div id="results" class="results">
     <div id="ticketCaptura" class="ticket-container">
         <div class="ticket-header">
+            <!-- LOGO EN EL TICKET DE CAPTURA -->
             <div class="logo-container">
-                <svg viewBox="0 0 280 80" xmlns="http://www.w3.org/2000/svg">
+                <svg viewBox="0 0 280 85" xmlns="http://www.w3.org/2000/svg">
                     <g transform="translate(5, 5)">
-                        <polygon points="20,25 45,10 70,25 45,40" fill="#802670" opacity="0.85"/>
-                        <polygon points="45,40 70,25 70,45 45,60" fill="#9e377a" opacity="0.9"/>
-                        <polygon points="20,25 45,40 45,60 20,45" fill="#bd4b8c" opacity="0.85"/>
-                        <polygon points="10,35 35,20 60,35 35,50" fill="#fab818" opacity="0.9"/>
-                        <polygon points="35,50 60,35 60,55 35,70" fill="#f4931f" opacity="0.95"/>
-                        <polygon points="10,35 35,50 35,70 10,55" fill="#e46c25" opacity="0.9"/>
+                        <polygon points="35,5 55,16.5 35,28 15,16.5" fill="#802670" />
+                        <polygon points="55,16.5 75,28 55,39.5 35,28" fill="#912f7c" />
+                        <polygon points="75,28 75,51 55,39.5" fill="#a43988" />
+                        <polygon points="55,39.5 75,51 55,62.5 35,51" fill="#b54293" />
+                        <polygon points="35,28 55,39.5 35,51 15,39.5" fill="#6d1e5f" />
+                        <polygon points="15,16.5 35,28 15,39.5" fill="#59164e" />
+                        
+                        <polygon points="15,39.5 35,51 15,62.5 15,39.5" fill="#fab818" />
+                        <polygon points="35,51 55,62.5 35,74 15,62.5" fill="#f4931f" />
+                        <polygon points="35,74 35,85 15,62.5" fill="#e46c25" />
+                        <polygon points="35,74 55,62.5 35,85" fill="#d35a1a" />
                     </g>
-                    <text x="85" y="48" font-family="sans-serif" font-size="22" font-weight="normal" fill="#222222">Torneria JRM</text>
+                    <text x="90" y="50" font-family="sans-serif" font-size="22" font-weight="normal" fill="#222222">Torneria JRM</text>
                 </svg>
             </div>
             <div class="ticket-date" id="ticketFecha">Fecha: --/--/----</div>
@@ -284,4 +298,4 @@
 </script>
 
 </body>
-</html> 
+</html>

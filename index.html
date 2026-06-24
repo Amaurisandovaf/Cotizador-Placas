@@ -6,10 +6,11 @@
     <title>Cotizador de Placas</title>
     <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#007bff">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         * { box-sizing: border-box; font-family: sans-serif; }
-        body { background-color: #f4f6f9; margin: 0; padding: 15px; display: flex; justify-content: center; }
-        .card { background: white; padding: 20px; border-radius: 12px; width: 100%; max-width: 460px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        body { background-color: #f4f6f9; margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; }
+        .card { background: white; padding: 20px; border-radius: 12px; width: 100%; max-width: 480px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
         h2 { text-align: center; color: #333; margin-top: 0; margin-bottom: 5px; }
         .subtitle { text-align: center; color: #666; font-size: 14px; margin-bottom: 20px; }
         label { display: block; margin: 12px 0 5px; font-weight: bold; color: #555; }
@@ -21,23 +22,30 @@
         .btn-add { width: 100%; background-color: #007bff; color: white; border: none; padding: 14px; border-radius: 8px; font-size: 16px; font-weight: bold; margin-top: 15px; cursor: pointer; }
         .btn-add:active { background-color: #0056b3; }
         
-        .btn-reset { width: 100%; background-color: #dc3545; color: white; border: none; padding: 10px; border-radius: 8px; font-size: 14px; font-weight: bold; margin-top: 15px; cursor: pointer; }
+        .btn-reset { width: 100%; background-color: #dc3545; color: white; border: none; padding: 12px; border-radius: 8px; font-size: 15px; font-weight: bold; margin-top: 15px; cursor: pointer; }
         .btn-reset:active { background-color: #bd2130; }
 
-        .btn-excel { width: 100%; background-color: #28a745; color: white; border: none; padding: 14px; border-radius: 8px; font-size: 16px; font-weight: bold; margin-top: 15px; cursor: pointer; }
-        .btn-excel:active { background-color: #1e7e34; }
+        .btn-screenshot { width: 100%; background-color: #28a745; color: white; border: none; padding: 14px; border-radius: 8px; font-size: 16px; font-weight: bold; margin-top: 15px; cursor: pointer; }
+        .btn-screenshot:active { background-color: #1e7e34; }
 
-        /* Lista de productos agregados */
-        .tabla-items { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; }
-        .tabla-items th, .tabla-items td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        .tabla-items th { background-color: #f8f9fa; color: #333; }
+        .btn-del { background: none; border: none; color: #dc3545; cursor: pointer; font-size: 16px; padding: 0 5px; }
 
-        .results { margin-top: 25px; background: #e9ecef; padding: 15px; border-radius: 8px; display: none; }
-        .results p { margin: 8px 0; font-size: 16px; color: #333; border-bottom: 1px dashed #ccc; padding-bottom: 5px; }
-        .results p:last-of-type { border-bottom: none; }
-        .val { float: right; font-weight: bold; }
-        .highlight { color: #007bff; }
-        .highlight-round { color: #28a745; font-size: 18px; }
+        /* Contenedor de Resultados en Pantalla */
+        .results { margin-top: 25px; background: #e9ecef; padding: 15px; border-radius: 8px; display: none; width: 100%; }
+
+        /* ====== ESTILO DEL TICKET DE COTIZACIÓN (SCREENSHOT) ====== */
+        .ticket-container { background: white; padding: 30px 25px; border-radius: 0; width: 100%; max-width: 440px; margin: 15px auto; box-shadow: 0 0 5px rgba(0,0,0,0.05); }
+        .ticket-header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 12px; margin-bottom: 15px; }
+        .ticket-title { font-size: 20px; font-weight: bold; color: #111; letter-spacing: 0.5px; text-transform: uppercase; margin: 0; }
+        .ticket-date { font-size: 13px; color: #555; margin-top: 5px; }
+        
+        .tabla-ticket { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .tabla-ticket th { border-bottom: 2px solid #333; padding: 8px 4px; text-align: left; font-size: 13px; color: #111; uppercase; }
+        .tabla-ticket td { padding: 10px 4px; border-bottom: 1px dashed #bbb; font-size: 13px; color: #333; vertical-align: middle; }
+        
+        .ticket-summary { margin-top: 20px; padding-top: 10px; }
+        .ticket-line { font-size: 14px; margin: 6px 0; color: #333; display: flex; justify-content: space-between; }
+        .ticket-line.total { font-size: 19px; font-weight: bold; border-top: 2px solid #333; padding-top: 8px; margin-top: 10px; color: #000; }
     </style>
 </head>
 <body>
@@ -68,12 +76,12 @@
 
     <div class="row">
         <div>
-            <label for="largo">Largo (metros):</label>
-            <input type="number" id="largo" step="0.01" placeholder="ej. 2.0">
+            <label for="largo">Largo (cm):</label>
+            <input type="number" id="largo" placeholder="ej. 200">
         </div>
         <div>
-            <label for="ancho">Ancho (metros):</label>
-            <input type="number" id="ancho" step="0.01" placeholder="ej. 1.2">
+            <label for="ancho">Ancho (cm):</label>
+            <input type="number" id="ancho" placeholder="ej. 120">
         </div>
     </div>
 
@@ -81,38 +89,46 @@
     <input type="number" id="cantidad" value="1" min="1" step="1">
 
     <button class="btn-add" onclick="agregarPlaca()">+ Agregar a la Cotización</button>
+</div>
 
-    <div id="results" class="results">
-        <h3>Piezas en la nota:</h3>
-        <table class="tabla-items">
+<div id="results" class="results">
+    <div id="ticketCaptura" class="ticket-container">
+        <div class="ticket-header">
+            <div class="ticket-title">Nota de Cotización</div>
+            <div class="ticket-date" id="ticketFecha">Fecha: --/--/----</div>
+        </div>
+        
+        <table class="tabla-ticket">
             <thead>
                 <tr>
-                    <th>Espesor</th>
-                    <th>Dim. (m)</th>
-                    <th>Cant</th>
-                    <th>Total Rec.</th>
+                    <th>Concepto</th>
+                    <th>Medidas</th>
+                    <th style="text-align: center;">Cant</th>
+                    <th style="text-align: right;">Total</th>
+                    <th class="no-captura" style="text-align: center;">Borr</th>
                 </tr>
             </thead>
             <tbody id="listaItems">
                 </tbody>
         </table>
 
-        <br>
-        <p>Peso Est. Total: <span id="resPeso" class="val" style="color:#e67e22;">0.00 kg</span></p>
-        <p>Precio Neto Total: <span id="resPrecio" class="val highlight">$0.00</span></p>
-        <p>Precio con IVA (16%): <span id="resIva" class="val">$0.00</span></p>
-        <p>Total Redondeado + IVA: <span id="resRedondeado" class="val highlight-round">$0.00</span></p>
-        
-        <button class="btn-excel" onclick="descargarExcel()">Descargar Nota Excel</button>
-        <button class="btn-reset" onclick="reiniciarProceso()">🗑️ Limpiar / Nueva Cotización</button>
+        <div class="ticket-summary">
+            <div class="ticket-line"><span style="color:#777;">Peso Est. Total:</span><span id="resPeso" style="font-weight: bold;">0.00 kg</span></div>
+            <div class="ticket-line"><span>Subtotal:</span><span id="resPrecio" style="font-weight: bold;">$0.00</span></div>
+            <div class="ticket-line"><span>IVA (16%):</span><span id="resIva" style="font-weight: bold;">$0.00</span></div>
+            <div class="ticket-line total"><span>TOTAL:</span><span id="resRedondeado">$0.00</span></div>
+        </div>
     </div>
+    
+    <button class="btn-screenshot" onclick="descargarTicketImagen()">📸 Descargar como Captura / Imagen</button>
+    <button class="btn-reset" onclick="reiniciarProceso()">🗑️ Limpiar / Nueva Cotización</button>
 </div>
 
 <script>
     const AREA_HOJA_ESTANDAR = 3.721; 
-    const CONSTANTE_PESO_ACERO = 50.28; 
+    // NUEVA CONSTANTE BASADA EN TU DATO: 750kg / 3.721m2 = ~201.5587 kg por m2 a 1 pulgada
+    const FACTOR_PESO_REAL = 750 / AREA_HOJA_ESTANDAR; 
     
-    // Lista global donde se guardarán todas las partidas agregadas
     let listaCotizaciones = [];
 
     function agregarPlaca() {
@@ -123,18 +139,21 @@
         const precioHoja = parseFloat(opcionSeleccionada.value);
         const pulgadas = parseFloat(opcionSeleccionada.getAttribute('data-pulgadas'));
         
-        const largo = parseFloat(document.getElementById('largo').value);
-        const ancho = parseFloat(document.getElementById('ancho').value);
+        const largoCm = parseFloat(document.getElementById('largo').value);
+        const anchoCm = parseFloat(document.getElementById('ancho').value);
         const cantidad = parseInt(document.getElementById('cantidad').value);
 
-        if (isNaN(largo) || isNaN(ancho) || largo <= 0 || ancho <= 0 || isNaN(cantidad) || cantidad <= 0) {
+        if (isNaN(largoCm) || isNaN(anchoCm) || largoCm <= 0 || anchoCm <= 0 || isNaN(cantidad) || cantidad <= 0) {
             alert("Por favor, ingresa medidas y cantidades válidas antes de agregar.");
             return;
         }
 
-        // 1. Cálculos unitarios y totales de esta partida
-        const areaPieza = largo * ancho;
-        const pesoUnitario = areaPieza * pulgadas * CONSTANTE_PESO_ACERO;
+        const largoMetros = largoCm / 100;
+        const anchoMetros = anchoCm / 100;
+
+        // Cálculo de peso ajustado con tu referencia real
+        const areaPieza = largoMetros * anchoMetros;
+        const pesoUnitario = areaPieza * pulgadas * FACTOR_PESO_REAL;
         const pesoTotalPartida = pesoUnitario * cantidad;
 
         const costoBasePieza = (precioHoja / AREA_HOJA_ESTANDAR) * areaPieza;
@@ -142,120 +161,106 @@
         const precioConIvaPartida = precioNetoPartida * 1.16;
         const precioRedondeadoPartida = Math.round(precioConIvaPartida);
 
-        // 2. Guardar objeto en nuestro arreglo global
         listaCotizaciones.push({
-            concepto: "Placa de " + nombrePlaca,
+            concepto: nombrePlaca,
             cantidad: cantidad,
-            largo: largo.toFixed(2) + " m",
-            ancho: ancho.toFixed(2) + " m",
-            area: (areaPieza * cantidad).toFixed(3) + " m2",
+            medidas: largoCm + "x" + anchoCm + " cm",
             peso: pesoTotalPartida,
             precioNeto: precioNetoPartida,
             precioConIva: precioConIvaPartida,
             precioRedondeado: precioRedondeadoPartida
         });
 
-        // 3. Limpiar los campos de medidas para la siguiente placa
         document.getElementById('largo').value = "";
         document.getElementById('ancho').value = "";
         document.getElementById('cantidad').value = "1";
 
-        // 4. Actualizar la interfaz
+        renderizarInterfaz();
+    }
+
+    function eliminarPlaca(index) {
+        listaCotizaciones.splice(index, 1);
         renderizarInterfaz();
     }
 
     function renderizarInterfaz() {
+        document.getElementById('ticketFecha').innerText = "Fecha: " + new Date().toLocaleDateString('es-MX');
+        
         const tabla = document.getElementById('listaItems');
-        tabla.innerHTML = ""; // Limpiar tabla anterior
+        tabla.innerHTML = ""; 
 
         let acumuladoPeso = 0;
         let acumuladoNeto = 0;
         let acumuladoIva = 0;
         let acumuladoRedondeado = 0;
 
-        // Recorrer los productos en la cotización y sumarlos
-        listaCotizaciones.forEach((item) => {
+        listaCotizaciones.forEach((item, index) => {
             acumuladoPeso += item.peso;
             acumuladoNeto += item.precioNeto;
             acumuladoIva += item.precioConIva;
             acumuladoRedondeado += item.precioRedondeado;
 
-            // Insertar fila visual
             const fila = document.createElement('tr');
             fila.innerHTML = `
                 <td>${item.concepto}</td>
-                <td>${item.largo} x ${item.ancho}</td>
-                <td>${item.cantidad}</td>
-                <td><strong>$${item.precioRedondeado.toLocaleString('es-MX')}</strong></td>
+                <td>${item.medidas}</td>
+                <td style="text-align: center;">${item.cantidad}</td>
+                <td style="text-align: right;"><strong>$${item.precioRedondeado.toLocaleString('es-MX')}</strong></td>
+                <td class="no-captura" style="text-align: center;"><button class="btn-del" onclick="eliminarPlaca(${index})">🗑️</button></td>
             `;
             tabla.appendChild(fila);
         });
 
-        // Mostrar sumatorias finales
+        let totalIvaSolo = acumuladoIva - acumuladoNeto;
+
         document.getElementById('resPeso').innerText = acumuladoPeso.toFixed(2) + " kg";
         document.getElementById('resPrecio').innerText = "$" + acumuladoNeto.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-        document.getElementById('resIva').innerText = "$" + acumuladoIva.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        document.getElementById('resIva').innerText = "$" + totalIvaSolo.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2});
         document.getElementById('resRedondeado').innerText = "$" + acumuladoRedondeado.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
-        // Hacer visible la sección de resultados si hay elementos
         document.getElementById('results').style.display = listaCotizaciones.length > 0 ? 'block' : 'none';
     }
 
     function reiniciarProceso() {
-        if(confirm("¿Estás seguro de que quieres borrar la cotización actual y empezar de cero?")) {
+        if(confirm("¿Estás seguro de borrar todo para una nueva cotización?")) {
             listaCotizaciones = [];
             renderizarInterfaz();
         }
     }
 
-    function descargarExcel() {
-        if (listaCotizaciones.length === 0) return;
-
-        let csvContent = "\uFEFF"; 
-        csvContent += "NOTA DE COTIZACIÓN DE MATERIALES\n";
-        csvContent += "Fecha:;" + new Date().toLocaleDateString('es-MX') + "\n\n";
+    // NUEVA FUNCIÓN: Genera la captura de pantalla limpia como imagen PNG
+    function descargarTicketImagen() {
+        const elementoTicket = document.getElementById('ticketCaptura');
         
-        // Encabezados de la tabla Excel
-        csvContent += "Concepto;Cant;Largo;Ancho;Área Total;Peso Est. Total;Precio Neto;Precio + IVA;Total Redondeado\n";
-        
-        let totalNetoGlobal = 0;
-        let totalIvaGlobal = 0;
-        let totalRedondeadoGlobal = 0;
+        // Ocultamos temporalmente la columna de borrar "🗑️" para que la foto salga limpia
+        const elementosNoCaptura = document.querySelectorAll('.no-captura');
+        elementosNoCaptura.forEach(el => el.style.display = 'none');
 
-        // Escribir fila por fila cada material cotizado
-        listaCotizaciones.forEach((item) => {
-            totalNetoGlobal += item.precioNeto;
-            totalIvaGlobal += item.precioConIva;
-            totalRedondeadoGlobal += item.precioRedondeado;
+        html2canvas(elementoTicket, {
+            backgroundColor: "#ffffff",
+            scale: 2, // Aumenta la definición para que no salga borrosa en el cel
+            logging: false
+        }).then(canvas => {
+            // Regresamos la visibilidad de la columna borrar a la pantalla del cel
+            elementosNoCaptura.forEach(el => el.style.display = '');
 
-            csvContent += `${item.concepto};${item.cantidad};${item.largo};${item.ancho};${item.area};${item.peso.toFixed(2)} kg;$${item.precioNeto.toFixed(2)};$${item.precioConIva.toFixed(2)};$${item.precioRedondeado}\n`;
+            // Convertir a archivo de descarga de imagen
+            const link = document.createElement('a');
+            link.download = `Cotizacion_${Date.now()}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }).catch(err => {
+            alert("Error al generar la imagen");
+            elementosNoCaptura.forEach(el => el.style.display = '');
         });
-        
-        // Agregar las filas de resumen al final del Excel
-        csvContent += `\n;;;;;;;TOTAL NETO:;$${totalNetoGlobal.toFixed(2)}\n`;
-        csvContent += `;;;;;;;TOTAL CON IVA:;$${totalIvaGlobal.toFixed(2)}\n`;
-        csvContent += `;;;;;;;TOTAL A COBRAR (REDONDEADO):;$${totalRedondeadoGlobal}\n`;
-
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        
-        link.setAttribute("href", url);
-        link.setAttribute("download", `Cotizacion_Multiple_${Date.now()}.csv`);
-        document.body.appendChild(link);
-        
-        link.click();
-        document.body.removeChild(link);
     }
 
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js')
-                .then(reg => console.log('Service Worker registrado', reg))
-                .catch(err => console.error('Error Service Worker', err));
+            navigator.serviceWorker.register('./sw.js');
         });
     }
 </script>
 
 </body>
-</html>
+</html> 

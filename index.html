@@ -33,11 +33,14 @@
         /* Contenedor de Resultados en Pantalla */
         .results { margin-top: 25px; background: #e9ecef; padding: 15px; border-radius: 8px; display: none; width: 100%; }
 
+        /* Contenedor del Logo SVG de Torneria JRM */
+        .logo-container { display: flex; align-items: center; justify-content: center; width: 100%; max-width: 250px; margin: 0 auto 15px; padding: 5px; }
+        .logo-container svg { width: 100%; height: auto; display: block; }
+
         /* ====== ESTILO DEL TICKET DE COTIZACIÓN (SCREENSHOT) ====== */
         .ticket-container { background: white; padding: 30px 25px; border-radius: 0; width: 100%; max-width: 440px; margin: 15px auto; box-shadow: 0 0 5px rgba(0,0,0,0.05); }
-        .ticket-header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 12px; margin-bottom: 15px; }
-        .ticket-title { font-size: 20px; font-weight: bold; color: #111; letter-spacing: 0.5px; text-transform: uppercase; margin: 0; }
-        .ticket-date { font-size: 13px; color: #555; margin-top: 5px; }
+        .ticket-header { border-bottom: 2px solid #333; padding-bottom: 12px; margin-bottom: 15px; }
+        .ticket-date { font-size: 13px; color: #555; margin-top: 8px; text-align: center; }
         
         .tabla-ticket { width: 100%; border-collapse: collapse; margin-top: 10px; }
         .tabla-ticket th { border-bottom: 2px solid #333; padding: 8px 4px; text-align: left; font-size: 13px; color: #111; uppercase; }
@@ -51,7 +54,20 @@
 <body>
 
 <div class="card">
-    <h2>Cotizador de Placas</h2>
+    <div class="logo-container">
+        <svg viewBox="0 0 280 80" xmlns="http://www.w3.org/2000/svg">
+            <g transform="translate(5, 5)">
+                <polygon points="20,25 45,10 70,25 45,40" fill="#802670" opacity="0.85"/>
+                <polygon points="45,40 70,25 70,45 45,60" fill="#9e377a" opacity="0.9"/>
+                <polygon points="20,25 45,40 45,60 20,45" fill="#bd4b8c" opacity="0.85"/>
+                <polygon points="10,35 35,20 60,35 35,50" fill="#fab818" opacity="0.9"/>
+                <polygon points="35,50 60,35 60,55 35,70" fill="#f4931f" opacity="0.95"/>
+                <polygon points="10,35 35,50 35,70 10,55" fill="#e46c25" opacity="0.9"/>
+            </g>
+            <text x="85" y="48" font-family="sans-serif" font-size="22" font-weight="normal" fill="#222222">Torneria JRM</text>
+        </svg>
+    </div>
+    
     <div class="subtitle">Agrega las piezas que necesites a la nota</div>
     
     <label for="placa">Espesor de Placa:</label>
@@ -94,7 +110,19 @@
 <div id="results" class="results">
     <div id="ticketCaptura" class="ticket-container">
         <div class="ticket-header">
-            <div class="ticket-title">Nota de Cotización</div>
+            <div class="logo-container">
+                <svg viewBox="0 0 280 80" xmlns="http://www.w3.org/2000/svg">
+                    <g transform="translate(5, 5)">
+                        <polygon points="20,25 45,10 70,25 45,40" fill="#802670" opacity="0.85"/>
+                        <polygon points="45,40 70,25 70,45 45,60" fill="#9e377a" opacity="0.9"/>
+                        <polygon points="20,25 45,40 45,60 20,45" fill="#bd4b8c" opacity="0.85"/>
+                        <polygon points="10,35 35,20 60,35 35,50" fill="#fab818" opacity="0.9"/>
+                        <polygon points="35,50 60,35 60,55 35,70" fill="#f4931f" opacity="0.95"/>
+                        <polygon points="10,35 35,50 35,70 10,55" fill="#e46c25" opacity="0.9"/>
+                    </g>
+                    <text x="85" y="48" font-family="sans-serif" font-size="22" font-weight="normal" fill="#222222">Torneria JRM</text>
+                </svg>
+            </div>
             <div class="ticket-date" id="ticketFecha">Fecha: --/--/----</div>
         </div>
         
@@ -109,7 +137,7 @@
                 </tr>
             </thead>
             <tbody id="listaItems">
-                </tbody>
+            </tbody>
         </table>
 
         <div class="ticket-summary">
@@ -126,7 +154,6 @@
 
 <script>
     const AREA_HOJA_ESTANDAR = 3.721; 
-    // NUEVA CONSTANTE BASADA EN TU DATO: 750kg / 3.721m2 = ~201.5587 kg por m2 a 1 pulgada
     const FACTOR_PESO_REAL = 750 / AREA_HOJA_ESTANDAR; 
     
     let listaCotizaciones = [];
@@ -151,7 +178,6 @@
         const largoMetros = largoCm / 100;
         const anchoMetros = anchoCm / 100;
 
-        // Cálculo de peso ajustado con tu referencia real
         const areaPieza = largoMetros * anchoMetros;
         const pesoUnitario = areaPieza * pulgadas * FACTOR_PESO_REAL;
         const pesoTotalPartida = pesoUnitario * cantidad;
@@ -228,23 +254,18 @@
         }
     }
 
-    // NUEVA FUNCIÓN: Genera la captura de pantalla limpia como imagen PNG
     function descargarTicketImagen() {
         const elementoTicket = document.getElementById('ticketCaptura');
-        
-        // Ocultamos temporalmente la columna de borrar "🗑️" para que la foto salga limpia
         const elementosNoCaptura = document.querySelectorAll('.no-captura');
         elementosNoCaptura.forEach(el => el.style.display = 'none');
 
         html2canvas(elementoTicket, {
             backgroundColor: "#ffffff",
-            scale: 2, // Aumenta la definición para que no salga borrosa en el cel
+            scale: 2, 
             logging: false
         }).then(canvas => {
-            // Regresamos la visibilidad de la columna borrar a la pantalla del cel
             elementosNoCaptura.forEach(el => el.style.display = '');
 
-            // Convertir a archivo de descarga de imagen
             const link = document.createElement('a');
             link.download = `Cotizacion_${Date.now()}.png`;
             link.href = canvas.toDataURL('image/png');

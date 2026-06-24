@@ -1,5 +1,3 @@
-// Cada vez que hagas un cambio en tu app, cambia este número (v1, v2, v3, v4...)
-// Esto le avisa al celular que hay código nuevo y borra la caché vieja automáticamente.
 const CACHE_NAME = 'cotizador-v3'; 
 
 // Los archivos locales de tu proyecto que la app necesita para funcionar sin internet

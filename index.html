@@ -33,8 +33,8 @@
         /* Contenedor de Resultados en Pantalla */
         .results { margin-top: 25px; background: #e9ecef; padding: 15px; border-radius: 8px; display: none; width: 100%; }
 
-        /* Contenedor del Logo de la Empresa (Fondo Blanco Integrado) */
-        .logo-container { display: flex; align-items: center; justify-content: center; width: 100%; max-width: 280px; margin: 0 auto 15px; background: #ffffff; padding: 10px; border-radius: 6px; }
+        /* Contenedor optimizado para eliminar el espacio gigante */
+        .logo-container { display: flex; align-items: center; justify-content: center; width: 100%; max-width: 280px; margin: 5px auto 15px; background: #ffffff; }
         .logo-container svg { width: 100%; height: auto; display: block; }
 
         /* ====== ESTILO DEL TICKET DE COTIZACIÓN (SCREENSHOT) ====== */
@@ -55,21 +55,19 @@
 
 <div class="card">
     <div class="logo-container">
-        <svg viewBox="0 0 280 80" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 280 60" xmlns="http://www.w3.org/2000/svg">
             <rect width="100%" height="100%" fill="#ffffff"/>
-            <g transform="translate(10, 5)">
-                <polygon points="35,5 55,16.5 35,28 15,16.5" fill="#802670"/>
-                <polygon points="55,16.5 75,28 55,39.5 35,28" fill="#9e377a"/>
-                <polygon points="75,28 75,51 55,39.5" fill="#bd4b8c"/>
-                <polygon points="55,39.5 75,51 55,62.5 35,51" fill="#fab818"/>
-                <polygon points="35,28 55,39.5 35,51 15,39.5" fill="#f4931f"/>
-                <polygon points="15,16.5 35,28 15,39.5" fill="#e46c25"/>
-                <polygon points="15,39.5 35,51 15,62.5" fill="#bd4b8c"/>
-                <polygon points="35,51 55,62.5 35,74 15,62.5" fill="#fab818"/>
-                <polygon points="35,74 35,80 15,62.5" fill="#f4931f"/>
-                <polygon points="35,74 55,62.5 35,80" fill="#e46c25"/>
+            <g transform="translate(12, -2) scale(0.72)">
+                <g transform="matrix(0.866, 0.5, -0.866, 0.5, 45, 10)">
+                    <polygon points="0,0 28,0 28,28 0,28" fill="#812671" />
+                    <polygon points="28,0 56,0 56,28 28,28" fill="#9F367A" />
+                    <polygon points="56,0 56,28 56,56 28,56" fill="#BD4A8D" />
+                    <polygon points="0,28 28,28 28,56 0,56" fill="#F3921E" />
+                    <polygon points="0,56 28,56 28,84 0,84" fill="#E36B25" />
+                    <polygon points="28,56 56,56 56,84 28,84" fill="#FAB813" />
+                </g>
             </g>
-            <text x="95" y="48" font-family="sans-serif" font-size="22" font-weight="bold" fill="#000000">Torneria JRM</text>
+            <text x="100" y="38" font-family="sans-serif" font-size="21" font-weight="bold" fill="#000000">Torneria JRM</text>
         </svg>
     </div>
     
@@ -116,21 +114,19 @@
     <div id="ticketCaptura" class="ticket-container">
         <div class="ticket-header">
             <div class="logo-container">
-                <svg viewBox="0 0 280 80" xmlns="http://www.w3.org/2000/svg">
+                <svg viewBox="0 0 280 60" xmlns="http://www.w3.org/2000/svg">
                     <rect width="100%" height="100%" fill="#ffffff"/>
-                    <g transform="translate(10, 5)">
-                        <polygon points="35,5 55,16.5 35,28 15,16.5" fill="#802670"/>
-                        <polygon points="55,16.5 75,28 55,39.5 35,28" fill="#9e377a"/>
-                        <polygon points="75,28 75,51 55,39.5" fill="#bd4b8c"/>
-                        <polygon points="55,39.5 75,51 55,62.5 35,51" fill="#fab818"/>
-                        <polygon points="35,28 55,39.5 35,51 15,39.5" fill="#f4931f"/>
-                        <polygon points="15,16.5 35,28 15,39.5" fill="#e46c25"/>
-                        <polygon points="15,39.5 35,51 15,62.5" fill="#bd4b8c"/>
-                        <polygon points="35,51 55,62.5 35,74 15,62.5" fill="#fab818"/>
-                        <polygon points="35,74 35,80 15,62.5" fill="#f4931f"/>
-                        <polygon points="35,74 55,62.5 35,80" fill="#e46c25"/>
+                    <g transform="translate(12, -2) scale(0.72)">
+                        <g transform="matrix(0.866, 0.5, -0.866, 0.5, 45, 10)">
+                            <polygon points="0,0 28,0 28,28 0,28" fill="#812671" />
+                            <polygon points="28,0 56,0 56,28 28,28" fill="#9F367A" />
+                            <polygon points="56,0 56,28 56,56 28,56" fill="#BD4A8D" />
+                            <polygon points="0,28 28,28 28,56 0,56" fill="#F3921E" />
+                            <polygon points="0,56 28,56 28,84 0,84" fill="#E36B25" />
+                            <polygon points="28,56 56,56 56,84 28,84" fill="#FAB813" />
+                        </g>
                     </g>
-                    <text x="95" y="48" font-family="sans-serif" font-size="22" font-weight="bold" fill="#000000">Torneria JRM</text>
+                    <text x="100" y="38" font-family="sans-serif" font-size="21" font-weight="bold" fill="#000000">Torneria JRM</text>
                 </svg>
             </div>
             <div class="ticket-date" id="ticketFecha">Fecha: --/--/----</div>
@@ -255,6 +251,27 @@
         document.getElementById('resRedondeado').innerText = "$" + acumuladoRedondeado.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
         document.getElementById('results').style.display = listaCotizaciones.length > 0 ? 'block' : 'none';
+    }
+
+    function descargarTicketImagen() {
+        const elementoTicket = document.getElementById('ticketCaptura');
+        const elementosNoCaptura = document.querySelectorAll('.no-captura');
+        elementosNoCaptura.forEach(el => el.style.display = 'none');
+
+        html2canvas(elementoTicket, {
+            backgroundColor: "#ffffff",
+            scale: 2, 
+            logging: false
+        }).then(canvas => {
+            elementosNoCaptura.forEach(el => el.style.display = '');
+            const link = document.createElement('a');
+            link.download = `Cotizacion_${Date.now()}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }).catch(err => {
+            alert("Error al generar la imagen");
+            elementosNoCaptura.forEach(el => el.style.display = '');
+        });
     }
 
     if ('serviceWorker' in navigator) {

@@ -1,8 +1,20 @@
 # Cotizador de Placas de Acero (Progressive Web App)
 
+## Contexto del Proyecto
+
+Este desarrollo surge como una solución tecnológica diseñada e implementada para resolver una necesidad real en el sector empresarial, optimizando los procesos de cálculo, cubicación y presupuestado interno de materiales dentro de un taller metalúrgico. 
+
+El proyecto fue desarrollado de manera integral por **Amauri Sandoval** (20 años), estudiante del séptimo semestre de la Licenciatura en Ingeniería de Software en la Facultad de Matemáticas de la Universidad Autónoma de Yucatán (UADY). Representa la consolidación de metodologías de ingeniería aplicadas al despliegue de soluciones estables, funcionales y autónomas en entornos operativos reales.
+
+---
+
+## Descripción General
+
 Aplicación web móvil optimizada para el cálculo, cubicación y presupuestado de múltiples placas de acero en función de sus dimensiones físicas y espesores comerciales en pulgadas. El sistema calcula de manera automática el peso estimado, subtotal, IVA y costos totales desglosados.
 
 Este desarrollo fue diseñado bajo el enfoque "Offline-First", lo que garantiza un funcionamiento óptimo en entornos con baja o nula conectividad a internet a través de la implementación de Service Workers.
+
+---
 
 ## Características Técnicas y Funcionales
 
@@ -13,6 +25,8 @@ Este desarrollo fue diseñado bajo el enfoque "Offline-First", lo que garantiza 
 * **Módulo de Exportación Visual:** Renderizado local de la nota de cotización en formato de imagen PNG mediante la integración de la librería html2canvas, facilitando su distribución directa.
 * **Persistencia Local (Modo Offline):** Cacheado completo del código fuente y librerías externas que permite ejecutar la aplicación, procesar cotizaciones y descargar los comprobantes sin requerir transferencia de datos activa.
 
+---
+
 ## Arquitectura y Tecnologías Utilizadas
 
 * **Estructura e Interfaz:** HTML5 y CSS3 con diseño adaptativo enfocado a dispositivos móviles.
@@ -20,10 +34,12 @@ Este desarrollo fue diseñado bajo el enfoque "Offline-First", lo que garantiza 
 * **Estrategia de Almacenamiento:** Service Workers configurados para la gestión dinámica de caché e interceptación de peticiones de red.
 * **Dependencias Externas:** Librería html2canvas embebida para la conversión asíncrona de nodos del DOM a mapas de bits.
 
-## Despliegue e Instalación local
+---
+
+## Despliegue e Instalación Local
 
 Para clonar y ejecutar el proyecto en un entorno de desarrollo o producción local:
 
 1. Clonar el repositorio:
-   ```bash
+```bash
    git clone [https://github.com/tu-usuario/tu-repositorio.git](https://github.com/tu-usuario/tu-repositorio.git)

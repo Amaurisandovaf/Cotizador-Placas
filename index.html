@@ -33,9 +33,8 @@
         /* Contenedor de Resultados en Pantalla */
         .results { margin-top: 25px; background: #e9ecef; padding: 15px; border-radius: 8px; display: none; width: 100%; }
 
-        /* Contenedor del Logo SVG de Torneria JRM */
-        .logo-container { display: flex; align-items: center; justify-content: center; width: 100%; max-width: 260px; margin: 0 auto 15px; padding: 5px; }
-        .logo-container svg { width: 100%; height: auto; display: block; }
+        /* Clase CSS para el Logo de Torneria JRM */
+        .logo-empresa { display: block; width: 100%; max-width: 240px; height: auto; margin: 0 auto 15px; object-fit: contain; }
 
         /* ====== ESTILO DEL TICKET DE COTIZACIÓN (SCREENSHOT) ====== */
         .ticket-container { background: white; padding: 30px 25px; border-radius: 0; width: 100%; max-width: 440px; margin: 15px auto; box-shadow: 0 0 5px rgba(0,0,0,0.05); }
@@ -43,7 +42,7 @@
         .ticket-date { font-size: 13px; color: #555; margin-top: 8px; text-align: center; }
         
         .tabla-ticket { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        .tabla-ticket th { border-bottom: 2px solid #333; padding: 8px 4px; text-align: left; font-size: 13px; color: #111; uppercase; }
+        .tabla-ticket th { border-bottom: 2px solid #333; padding: 8px 4px; text-align: left; font-size: 13px; color: #111; text-transform: uppercase; }
         .tabla-ticket td { padding: 10px 4px; border-bottom: 1px dashed #bbb; font-size: 13px; color: #333; vertical-align: middle; }
         
         .ticket-summary { margin-top: 20px; padding-top: 10px; }
@@ -54,27 +53,7 @@
 <body>
 
 <div class="card">
-    <!-- NUEVO LOGO FIEL A LA IMAGEN_E860C3.PNG -->
-    <div class="logo-container">
-        <svg viewBox="0 0 280 85" xmlns="http://www.w3.org/2000/svg">
-            <g transform="translate(5, 5)">
-                <!-- Bloque Superior / Derecho (Tonos Violeta/Morado/Rosa) -->
-                <polygon points="35,5 55,16.5 35,28 15,16.5" fill="#802670" />
-                <polygon points="55,16.5 75,28 55,39.5 35,28" fill="#912f7c" />
-                <polygon points="75,28 75,51 55,39.5" fill="#a43988" />
-                <polygon points="55,39.5 75,51 55,62.5 35,51" fill="#b54293" />
-                <polygon points="35,28 55,39.5 35,51 15,39.5" fill="#6d1e5f" />
-                <polygon points="15,16.5 35,28 15,39.5" fill="#59164e" />
-                
-                <!-- Bloque Inferior / Izquierdo (Tonos Amarillo/Naranja) -->
-                <polygon points="15,39.5 35,51 15,62.5 15,39.5" fill="#fab818" />
-                <polygon points="35,51 55,62.5 35,74 15,62.5" fill="#f4931f" />
-                <polygon points="35,74 35,85 15,62.5" fill="#e46c25" />
-                <polygon points="35,74 55,62.5 35,85" fill="#d35a1a" />
-            </g>
-            <text x="90" y="50" font-family="sans-serif" font-size="22" font-weight="normal" fill="#222222">Torneria JRM</text>
-        </svg>
-    </div>
+    <img src="logo.png" alt="Torneria JRM" class="logo-empresa">
     
     <div class="subtitle">Agrega las piezas que necesites a la nota</div>
     
@@ -118,25 +97,7 @@
 <div id="results" class="results">
     <div id="ticketCaptura" class="ticket-container">
         <div class="ticket-header">
-            <!-- LOGO EN EL TICKET DE CAPTURA -->
-            <div class="logo-container">
-                <svg viewBox="0 0 280 85" xmlns="http://www.w3.org/2000/svg">
-                    <g transform="translate(5, 5)">
-                        <polygon points="35,5 55,16.5 35,28 15,16.5" fill="#802670" />
-                        <polygon points="55,16.5 75,28 55,39.5 35,28" fill="#912f7c" />
-                        <polygon points="75,28 75,51 55,39.5" fill="#a43988" />
-                        <polygon points="55,39.5 75,51 55,62.5 35,51" fill="#b54293" />
-                        <polygon points="35,28 55,39.5 35,51 15,39.5" fill="#6d1e5f" />
-                        <polygon points="15,16.5 35,28 15,39.5" fill="#59164e" />
-                        
-                        <polygon points="15,39.5 35,51 15,62.5 15,39.5" fill="#fab818" />
-                        <polygon points="35,51 55,62.5 35,74 15,62.5" fill="#f4931f" />
-                        <polygon points="35,74 35,85 15,62.5" fill="#e46c25" />
-                        <polygon points="35,74 55,62.5 35,85" fill="#d35a1a" />
-                    </g>
-                    <text x="90" y="50" font-family="sans-serif" font-size="22" font-weight="normal" fill="#222222">Torneria JRM</text>
-                </svg>
-            </div>
+            <img src="logo.png" alt="Torneria JRM" class="logo-empresa">
             <div class="ticket-date" id="ticketFecha">Fecha: --/--/----</div>
         </div>
         
@@ -276,6 +237,7 @@
         html2canvas(elementoTicket, {
             backgroundColor: "#ffffff",
             scale: 2, 
+            useCORS: true, // Evita bloqueos al renderizar la imagen local en el canvas
             logging: false
         }).then(canvas => {
             elementosNoCaptura.forEach(el => el.style.display = '');

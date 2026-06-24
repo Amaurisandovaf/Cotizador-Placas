@@ -4,7 +4,7 @@
 
 Este desarrollo surge como una solución tecnológica diseñada e implementada para resolver una necesidad real en el sector empresarial, optimizando los procesos de cálculo, cubicación y presupuestado interno de materiales dentro de un taller metalúrgico. 
 
-El proyecto fue desarrollado de manera integral por **Amauri Sandoval** (20 años), estudiante del séptimo semestre de la Licenciatura en Ingeniería de Software en la Facultad de Matemáticas de la Universidad Autónoma de Yucatán (UADY). Representa la consolidación de metodologías de ingeniería aplicadas al despliegue de soluciones estables, funcionales y autónomas en entornos operativos reales.
+El proyecto fue desarrollado de manera integral por **Amauri Yael Sandoval Fuentes** (20 años), estudiante del séptimo semestre de la Licenciatura en Ingeniería de Software en la Facultad de Matemáticas de la Universidad Autónoma de Yucatán (UADY). Representa la consolidación de metodologías de ingeniería aplicadas al despliegue de soluciones estables, funcionales y autónomas en entornos operativos reales.
 
 ---
 

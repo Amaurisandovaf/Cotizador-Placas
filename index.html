@@ -3,14 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cotizador de Placas</title>
+    <title>Cotizador - Torneria JRM</title>
     <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#007bff">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         * { box-sizing: border-box; font-family: sans-serif; }
         body { background-color: #f4f6f9; margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; }
-        .card { background: white; padding: 20px; border-radius: 12px; width: 100%; max-width: 480px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
+
+        /* ── TABS ── */
+        .tabs { display: flex; width: 100%; max-width: 480px; margin-bottom: 0; border-radius: 12px 12px 0 0; overflow: hidden; }
+        .tab-btn { flex: 1; padding: 13px; font-size: 15px; font-weight: bold; border: none; cursor: pointer; background: #dde1e7; color: #555; transition: background .2s; }
+        .tab-btn.active { background: #007bff; color: #fff; }
+        .tab-btn:first-child { border-radius: 12px 0 0 0; }
+        .tab-btn:last-child  { border-radius: 0 12px 0 0; }
+
+        .card { background: white; padding: 20px; border-radius: 0 0 12px 12px; width: 100%; max-width: 480px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
         h2 { text-align: center; color: #333; margin-top: 0; margin-bottom: 5px; }
         .subtitle { text-align: center; color: #666; font-size: 14px; margin-bottom: 20px; }
         label { display: block; margin: 12px 0 5px; font-weight: bold; color: #555; }
@@ -18,98 +29,149 @@
         select:focus, input:focus { border-color: #007bff; }
         .row { display: flex; gap: 10px; }
         .row div { flex: 1; }
-        
-        .btn-add { width: 100%; background-color: #007bff; color: white; border: none; padding: 14px; border-radius: 8px; font-size: 16px; font-weight: bold; margin-top: 15px; cursor: pointer; }
-        .btn-add:active { background-color: #0056b3; }
-        
+
+        .btn-add  { width: 100%; background-color: #007bff; color: white; border: none; padding: 14px; border-radius: 8px; font-size: 16px; font-weight: bold; margin-top: 15px; cursor: pointer; }
+        .btn-add:active  { background-color: #0056b3; }
+        .btn-add-ancla { width: 100%; background-color: #6f42c1; color: white; border: none; padding: 14px; border-radius: 8px; font-size: 16px; font-weight: bold; margin-top: 15px; cursor: pointer; }
+        .btn-add-ancla:active { background-color: #4e2d8e; }
         .btn-reset { width: 100%; background-color: #dc3545; color: white; border: none; padding: 12px; border-radius: 8px; font-size: 15px; font-weight: bold; margin-top: 15px; cursor: pointer; }
         .btn-reset:active { background-color: #bd2130; }
-
         .btn-screenshot { width: 100%; background-color: #28a745; color: white; border: none; padding: 14px; border-radius: 8px; font-size: 16px; font-weight: bold; margin-top: 15px; cursor: pointer; }
         .btn-screenshot:active { background-color: #1e7e34; }
-
         .btn-del { background: none; border: none; color: #dc3545; cursor: pointer; font-size: 16px; padding: 0 5px; }
 
-        /* Contenedor de Resultados en Pantalla */
         .results { margin-top: 25px; background: #e9ecef; padding: 15px; border-radius: 8px; display: none; width: 100%; }
 
-        /* Contenedor optimizado para eliminar el espacio gigante */
         .logo-container { display: flex; align-items: center; justify-content: center; width: 100%; max-width: 280px; margin: 5px auto 15px; background: #ffffff; }
         .logo-container svg { width: 100%; height: auto; display: block; }
 
-        /* ====== ESTILO DEL TICKET DE COTIZACIÓN (SCREENSHOT) ====== */
+        /* ── TICKET ── */
         .ticket-container { background: white; padding: 30px 25px; border-radius: 0; width: 100%; max-width: 440px; margin: 15px auto; box-shadow: 0 0 5px rgba(0,0,0,0.05); }
         .ticket-header { border-bottom: 2px solid #333; padding-bottom: 12px; margin-bottom: 15px; }
         .ticket-date { font-size: 13px; color: #555; margin-top: 8px; text-align: center; }
-        
         .tabla-ticket { width: 100%; border-collapse: collapse; margin-top: 10px; }
         .tabla-ticket th { border-bottom: 2px solid #333; padding: 8px 4px; text-align: left; font-size: 13px; color: #111; text-transform: uppercase; }
         .tabla-ticket td { padding: 10px 4px; border-bottom: 1px dashed #bbb; font-size: 13px; color: #333; vertical-align: middle; }
-        
         .ticket-summary { margin-top: 20px; padding-top: 10px; }
         .ticket-line { font-size: 14px; margin: 6px 0; color: #333; display: flex; justify-content: space-between; }
         .ticket-line.total { font-size: 19px; font-weight: bold; border-top: 2px solid #333; padding-top: 8px; margin-top: 10px; color: #000; }
+
+        /* ── ANCLAS badge ── */
+        .badge-ancla { display: inline-block; background: #6f42c1; color: #fff; font-size: 10px; border-radius: 4px; padding: 1px 5px; margin-left: 4px; vertical-align: middle; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <div class="logo-container">
-        <svg viewBox="0 0 280 60" xmlns="http://www.w3.org/2000/svg">
-            <rect width="100%" height="100%" fill="#ffffff"/>
-            <g transform="translate(12, -2) scale(0.72)">
-                <g transform="matrix(0.866, 0.5, -0.866, 0.5, 45, 10)">
-                    <polygon points="0,0 28,0 28,28 0,28" fill="#812671" />
-                    <polygon points="28,0 56,0 56,28 28,28" fill="#9F367A" />
-                    <polygon points="56,0 56,28 56,56 28,56" fill="#BD4A8D" />
-                    <polygon points="0,28 28,28 28,56 0,56" fill="#F3921E" />
-                    <polygon points="0,56 28,56 28,84 0,84" fill="#E36B25" />
-                    <polygon points="28,56 56,56 56,84 28,84" fill="#FAB813" />
-                </g>
-            </g>
-            <text x="100" y="38" font-family="sans-serif" font-size="21" font-weight="bold" fill="#000000">Torneria JRM</text>
-        </svg>
-    </div>
-    
-    <div class="subtitle">Agrega las piezas que necesites a la nota</div>
-    
-    <label for="placa">Espesor de Placa:</label>
-    <select id="placa">
-        <option value="1250" data-pulgadas="0.0625">1/16 pulgada ($1,250)</option>
-        <option value="2500" data-pulgadas="0.125">1/8 pulgada ($2,500)</option>
-        <option value="3750" data-pulgadas="0.1875">3/16 pulgada ($3,750)</option>
-        <option value="5000" data-pulgadas="0.25">1/4 pulgada ($5,000)</option>
-        <option value="6250" data-pulgadas="0.3125">5/16 pulgada ($6,250)</option>
-        <option value="7500" data-pulgadas="0.375">3/8 pulgada ($7,500)</option>
-        <option value="8750" data-pulgadas="0.4375">7/16 pulgada ($8,750)</option>
-        <option value="10000" data-pulgadas="0.5">1/2 pulgada ($10,000)</option>
-        <option value="11250" data-pulgadas="0.5625">9/16 pulgada ($11,250)</option>
-        <option value="12500" data-pulgadas="0.625">5/8 pulgada ($12,500)</option>
-        <option value="13750" data-pulgadas="0.6875">11/16 pulgada ($13,750)</option>
-        <option value="15000" data-pulgadas="0.75">3/4 pulgada ($15,000)</option>
-        <option value="16250" data-pulgadas="0.8125">13/16 pulgada ($16,250)</option>
-        <option value="17500" data-pulgadas="0.875">7/8 pulgada ($17,500)</option>
-        <option value="18750" data-pulgadas="0.9375">15/16 pulgada ($18,750)</option>
-        <option value="20000" data-pulgadas="1.0">1 pulgada ($20,000)</option>
-    </select>
-
-    <div class="row">
-        <div>
-            <label for="largo">Largo (cm):</label>
-            <input type="number" id="largo" placeholder="ej. 200">
-        </div>
-        <div>
-            <label for="ancho">Ancho (cm):</label>
-            <input type="number" id="ancho" placeholder="ej. 120">
-        </div>
-    </div>
-
-    <label for="cantidad">Cantidad:</label>
-    <input type="number" id="cantidad" value="1" min="1" step="1">
-
-    <button class="btn-add" onclick="agregarPlaca()">+ Agregar a la Cotización</button>
+<!-- TABS -->
+<div class="tabs">
+    <button class="tab-btn active" onclick="cambiarTab('placas')">🔩 Placas</button>
+    <button class="tab-btn" onclick="cambiarTab('anclas')">⚓ Anclas</button>
 </div>
 
+<div class="card">
+
+    <!-- ══════════════ TAB PLACAS ══════════════ -->
+    <div id="tab-placas" class="tab-panel active">
+        <div class="logo-container">
+            <svg viewBox="0 0 280 60" xmlns="http://www.w3.org/2000/svg">
+                <rect width="100%" height="100%" fill="#ffffff"/>
+                <g transform="translate(12, -2) scale(0.72)">
+                    <g transform="matrix(0.866, 0.5, -0.866, 0.5, 45, 10)">
+                        <polygon points="0,0 28,0 28,28 0,28" fill="#812671" />
+                        <polygon points="28,0 56,0 56,28 28,28" fill="#9F367A" />
+                        <polygon points="56,0 56,28 56,56 28,56" fill="#BD4A8D" />
+                        <polygon points="0,28 28,28 28,56 0,56" fill="#F3921E" />
+                        <polygon points="0,56 28,56 28,84 0,84" fill="#E36B25" />
+                        <polygon points="28,56 56,56 56,84 28,84" fill="#FAB813" />
+                    </g>
+                </g>
+                <text x="100" y="38" font-family="sans-serif" font-size="21" font-weight="bold" fill="#000000">Torneria JRM</text>
+            </svg>
+        </div>
+        <div class="subtitle">Agrega las placas que necesites a la nota</div>
+
+        <label for="placa">Espesor de Placa:</label>
+        <select id="placa">
+            <option value="1250" data-pulgadas="0.0625">1/16 pulgada ($1,250)</option>
+            <option value="2500" data-pulgadas="0.125">1/8 pulgada ($2,500)</option>
+            <option value="3750" data-pulgadas="0.1875">3/16 pulgada ($3,750)</option>
+            <option value="5000" data-pulgadas="0.25">1/4 pulgada ($5,000)</option>
+            <option value="6250" data-pulgadas="0.3125">5/16 pulgada ($6,250)</option>
+            <option value="7500" data-pulgadas="0.375">3/8 pulgada ($7,500)</option>
+            <option value="8750" data-pulgadas="0.4375">7/16 pulgada ($8,750)</option>
+            <option value="10000" data-pulgadas="0.5">1/2 pulgada ($10,000)</option>
+            <option value="11250" data-pulgadas="0.5625">9/16 pulgada ($11,250)</option>
+            <option value="12500" data-pulgadas="0.625">5/8 pulgada ($12,500)</option>
+            <option value="13750" data-pulgadas="0.6875">11/16 pulgada ($13,750)</option>
+            <option value="15000" data-pulgadas="0.75">3/4 pulgada ($15,000)</option>
+            <option value="16250" data-pulgadas="0.8125">13/16 pulgada ($16,250)</option>
+            <option value="17500" data-pulgadas="0.875">7/8 pulgada ($17,500)</option>
+            <option value="18750" data-pulgadas="0.9375">15/16 pulgada ($18,750)</option>
+            <option value="20000" data-pulgadas="1.0">1 pulgada ($20,000)</option>
+        </select>
+
+        <div class="row">
+            <div>
+                <label for="largo">Largo (cm):</label>
+                <input type="number" id="largo" placeholder="ej. 200">
+            </div>
+            <div>
+                <label for="ancho">Ancho (cm):</label>
+                <input type="number" id="ancho" placeholder="ej. 120">
+            </div>
+        </div>
+
+        <label for="cantidad">Cantidad:</label>
+        <input type="number" id="cantidad" value="1" min="1" step="1">
+
+        <button class="btn-add" onclick="agregarPlaca()">+ Agregar Placa a la Cotización</button>
+    </div>
+
+    <!-- ══════════════ TAB ANCLAS ══════════════ -->
+    <div id="tab-anclas" class="tab-panel">
+        <div class="logo-container">
+            <svg viewBox="0 0 280 60" xmlns="http://www.w3.org/2000/svg">
+                <rect width="100%" height="100%" fill="#ffffff"/>
+                <g transform="translate(12, -2) scale(0.72)">
+                    <g transform="matrix(0.866, 0.5, -0.866, 0.5, 45, 10)">
+                        <polygon points="0,0 28,0 28,28 0,28" fill="#812671" />
+                        <polygon points="28,0 56,0 56,28 28,28" fill="#9F367A" />
+                        <polygon points="56,0 56,28 56,56 28,56" fill="#BD4A8D" />
+                        <polygon points="0,28 28,28 28,56 0,56" fill="#F3921E" />
+                        <polygon points="0,56 28,56 28,84 0,84" fill="#E36B25" />
+                        <polygon points="28,56 56,56 56,84 28,84" fill="#FAB813" />
+                    </g>
+                </g>
+                <text x="100" y="38" font-family="sans-serif" font-size="21" font-weight="bold" fill="#000000">Torneria JRM</text>
+            </svg>
+        </div>
+        <div class="subtitle">Agrega las anclas que necesites a la nota</div>
+
+        <label for="ancla-grosor">Grosor del Varilla:</label>
+        <select id="ancla-grosor">
+            <!-- value = precio material por 6m | data-dobles = precio dobles | data-tuerca = precio tuerca -->
+            <option value="300" data-dobles="10" data-tuerca="35">1/2 pulgada</option>
+            <option value="400" data-dobles="20" data-tuerca="40">5/8 pulgada</option>
+            <option value="500" data-dobles="30" data-tuerca="50">3/4 pulgada</option>
+            <option value="850" data-dobles="50" data-tuerca="100">1 pulgada</option>
+            <option value="1500" data-dobles="100" data-tuerca="150">1 1/4 pulgada</option>
+        </select>
+
+        <label for="ancla-largo">Largo de la ancla (cm):</label>
+        <input type="number" id="ancla-largo" placeholder="ej. 30">
+
+        <label for="ancla-dobles">Doblés (cm):</label>
+        <input type="number" id="ancla-dobles" placeholder="ej. 10">
+
+        <label for="ancla-cantidad">Cantidad:</label>
+        <input type="number" id="ancla-cantidad" value="1" min="1" step="1">
+
+        <button class="btn-add-ancla" onclick="agregarAncla()">⚓ Agregar Ancla a la Cotización</button>
+    </div>
+
+</div>
+
+<!-- ══════════════ RESULTADOS ══════════════ -->
 <div id="results" class="results">
     <div id="ticketCaptura" class="ticket-container">
         <div class="ticket-header">
@@ -131,47 +193,55 @@
             </div>
             <div class="ticket-date" id="ticketFecha">Fecha: --/--/----</div>
         </div>
-        
+
         <table class="tabla-ticket">
             <thead>
                 <tr>
                     <th>Concepto</th>
-                    <th>Medidas</th>
-                    <th style="text-align: center;">Cant</th>
-                    <th style="text-align: right;">Total</th>
-                    <th class="no-captura" style="text-align: center;">Borr</th>
+                    <th>Detalle</th>
+                    <th style="text-align:center;">Cant</th>
+                    <th style="text-align:right;">Total</th>
+                    <th class="no-captura" style="text-align:center;">Borr</th>
                 </tr>
             </thead>
-            <tbody id="listaItems">
-            </tbody>
+            <tbody id="listaItems"></tbody>
         </table>
 
         <div class="ticket-summary">
-            <div class="ticket-line"><span style="color:#777;">Peso Est. Total:</span><span id="resPeso" style="font-weight: bold;">0.00 kg</span></div>
-            <div class="ticket-line"><span>Subtotal:</span><span id="resPrecio" style="font-weight: bold;">$0.00</span></div>
-            <div class="ticket-line"><span>IVA (16%):</span><span id="resIva" style="font-weight: bold;">$0.00</span></div>
+            <div class="ticket-line"><span style="color:#777;">Peso Est. Total:</span><span id="resPeso" style="font-weight:bold;">0.00 kg</span></div>
+            <div class="ticket-line"><span>Subtotal:</span><span id="resPrecio" style="font-weight:bold;">$0.00</span></div>
+            <div class="ticket-line"><span>IVA (16%):</span><span id="resIva" style="font-weight:bold;">$0.00</span></div>
             <div class="ticket-line total"><span>TOTAL:</span><span id="resRedondeado">$0.00</span></div>
         </div>
     </div>
-    
+
     <button class="btn-screenshot" onclick="descargarTicketImagen()">📸 Descargar como Captura / Imagen</button>
     <button class="btn-reset" onclick="reiniciarProceso()">🗑️ Limpiar / Nueva Cotización</button>
 </div>
 
 <script>
-    const AREA_HOJA_ESTANDAR = 3.721; 
-    const FACTOR_PESO_REAL = 750 / AREA_HOJA_ESTANDAR; 
-    
+    const AREA_HOJA_ESTANDAR = 3.721;
+    const FACTOR_PESO_REAL = 750 / AREA_HOJA_ESTANDAR;
+
     let listaCotizaciones = [];
 
+    // ── TABS ──
+    function cambiarTab(tab) {
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('tab-' + tab).classList.add('active');
+        event.target.classList.add('active');
+    }
+
+    // ── AGREGAR PLACA ──
     function agregarPlaca() {
         const selectPlaca = document.getElementById('placa');
-        const opcionSeleccionada = selectPlaca.options[selectPlaca.selectedIndex];
-        
-        const nombrePlaca = opcionSeleccionada.text.split(' ($')[0];
-        const precioHoja = parseFloat(opcionSeleccionada.value);
-        const pulgadas = parseFloat(opcionSeleccionada.getAttribute('data-pulgadas'));
-        
+        const opcion = selectPlaca.options[selectPlaca.selectedIndex];
+
+        const nombrePlaca = opcion.text.split(' ($')[0];
+        const precioHoja = parseFloat(opcion.value);
+        const pulgadas = parseFloat(opcion.getAttribute('data-pulgadas'));
+
         const largoCm = parseFloat(document.getElementById('largo').value);
         const anchoCm = parseFloat(document.getElementById('ancho').value);
         const cantidad = parseInt(document.getElementById('cantidad').value);
@@ -181,45 +251,90 @@
             return;
         }
 
-        const largoMetros = largoCm / 100;
-        const anchoMetros = anchoCm / 100;
-
-        const areaPieza = largoMetros * anchoMetros;
+        const largoM = largoCm / 100;
+        const anchoM = anchoCm / 100;
+        const areaPieza = largoM * anchoM;
         const pesoUnitario = areaPieza * pulgadas * FACTOR_PESO_REAL;
-        const pesoTotalPartida = pesoUnitario * cantidad;
+        const pesoTotal = pesoUnitario * cantidad;
 
-        const costoBasePieza = (precioHoja / AREA_HOJA_ESTANDAR) * areaPieza;
-        const precioNetoPartida = (costoBasePieza * 2) * cantidad;
-        const precioConIvaPartida = precioNetoPartida * 1.16;
-        const precioRedondeadoPartida = Math.round(precioConIvaPartida);
+        const costoBase = (precioHoja / AREA_HOJA_ESTANDAR) * areaPieza;
+        const precioNeto = (costoBase * 2) * cantidad;
+        const precioConIva = precioNeto * 1.16;
+        const precioRedondeado = Math.round(precioConIva);
 
         listaCotizaciones.push({
+            tipo: 'placa',
             concepto: nombrePlaca,
-            cantidad: cantidad,
-            medidas: largoCm + "x" + anchoCm + " cm",
-            peso: pesoTotalPartida,
-            precioNeto: precioNetoPartida,
-            precioConIva: precioConIvaPartida,
-            precioRedondeado: precioRedondeadoPartida
+            detalle: largoCm + "x" + anchoCm + " cm",
+            cantidad,
+            peso: pesoTotal,
+            precioNeto,
+            precioConIva,
+            precioRedondeado
         });
 
         document.getElementById('largo').value = "";
         document.getElementById('ancho').value = "";
         document.getElementById('cantidad').value = "1";
-
         renderizarInterfaz();
     }
 
-    function eliminarPlaca(index) {
+    // ── AGREGAR ANCLA ──
+    function agregarAncla() {
+        const selectAncla = document.getElementById('ancla-grosor');
+        const opcion = selectAncla.options[selectAncla.selectedIndex];
+
+        const nombreGrosor = opcion.text;
+        const precioMaterial6m = parseFloat(opcion.value);
+        const precioDobles = parseFloat(opcion.getAttribute('data-dobles'));
+        const precioTuerca = parseFloat(opcion.getAttribute('data-tuerca'));
+
+        const largoCm = parseFloat(document.getElementById('ancla-largo').value);
+        const doblesCm = parseFloat(document.getElementById('ancla-dobles').value);
+        const cantidad = parseInt(document.getElementById('ancla-cantidad').value);
+
+        if (isNaN(largoCm) || largoCm <= 0 || isNaN(doblesCm) || doblesCm <= 0 || isNaN(cantidad) || cantidad <= 0) {
+            alert("Por favor, ingresa largo, doblés y cantidad válidos antes de agregar.");
+            return;
+        }
+
+        // Fórmula: (precioMaterial/6) * (largoCm/100) + precioTuerca + precioDobles
+        const largoM = largoCm / 100;
+        const precioMaterialUnitario = (precioMaterial6m / 6) * largoM;
+        const precioNetoUnitario = precioMaterialUnitario + precioTuerca + precioDobles;
+        const precioNeto = precioNetoUnitario * cantidad;
+        const precioConIva = precioNeto * 1.16;
+        const precioRedondeado = Math.round(precioConIva);
+
+        listaCotizaciones.push({
+            tipo: 'ancla',
+            concepto: 'Ancla ' + nombreGrosor,
+            detalle: largoCm + "cm largo / " + doblesCm + "cm doblés",
+            cantidad,
+            peso: 0, // anclas no calculan peso estimado
+            precioNeto,
+            precioConIva,
+            precioRedondeado
+        });
+
+        document.getElementById('ancla-largo').value = "";
+        document.getElementById('ancla-dobles').value = "";
+        document.getElementById('ancla-cantidad').value = "1";
+        renderizarInterfaz();
+    }
+
+    // ── ELIMINAR ──
+    function eliminarItem(index) {
         listaCotizaciones.splice(index, 1);
         renderizarInterfaz();
     }
 
+    // ── RENDERIZAR ──
     function renderizarInterfaz() {
         document.getElementById('ticketFecha').innerText = "Fecha: " + new Date().toLocaleDateString('es-MX');
-        
+
         const tabla = document.getElementById('listaItems');
-        tabla.innerHTML = ""; 
+        tabla.innerHTML = "";
 
         let acumuladoPeso = 0;
         let acumuladoNeto = 0;
@@ -232,48 +347,53 @@
             acumuladoIva += item.precioConIva;
             acumuladoRedondeado += item.precioRedondeado;
 
+            const badge = item.tipo === 'ancla' ? '<span class="badge-ancla">ancla</span>' : '';
             const fila = document.createElement('tr');
             fila.innerHTML = `
-                <td>${item.concepto}</td>
-                <td>${item.medidas}</td>
-                <td style="text-align: center;">${item.cantidad}</td>
-                <td style="text-align: right;"><strong>$${item.precioRedondeado.toLocaleString('es-MX')}</strong></td>
-                <td class="no-captura" style="text-align: center;"><button class="btn-del" onclick="eliminarPlaca(${index})">🗑️</button></td>
+                <td>${item.concepto}${badge}</td>
+                <td>${item.detalle}</td>
+                <td style="text-align:center;">${item.cantidad}</td>
+                <td style="text-align:right;"><strong>$${item.precioRedondeado.toLocaleString('es-MX')}</strong></td>
+                <td class="no-captura" style="text-align:center;"><button class="btn-del" onclick="eliminarItem(${index})">🗑️</button></td>
             `;
             tabla.appendChild(fila);
         });
 
-        let totalIvaSolo = acumuladoIva - acumuladoNeto;
+        const ivaOnly = acumuladoIva - acumuladoNeto;
 
         document.getElementById('resPeso').innerText = acumuladoPeso.toFixed(2) + " kg";
-        document.getElementById('resPrecio').innerText = "$" + acumuladoNeto.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-        document.getElementById('resIva').innerText = "$" + totalIvaSolo.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-        document.getElementById('resRedondeado').innerText = "$" + acumuladoRedondeado.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        document.getElementById('resPrecio').innerText = "$" + acumuladoNeto.toLocaleString('es-MX', {minimumFractionDigits:2, maximumFractionDigits:2});
+        document.getElementById('resIva').innerText = "$" + ivaOnly.toLocaleString('es-MX', {minimumFractionDigits:2, maximumFractionDigits:2});
+        document.getElementById('resRedondeado').innerText = "$" + acumuladoRedondeado.toLocaleString('es-MX', {minimumFractionDigits:2, maximumFractionDigits:2});
 
         document.getElementById('results').style.display = listaCotizaciones.length > 0 ? 'block' : 'none';
     }
 
+    // ── REINICIAR ──
+    function reiniciarProceso() {
+        listaCotizaciones = [];
+        renderizarInterfaz();
+    }
+
+    // ── SCREENSHOT ──
     function descargarTicketImagen() {
         const elementoTicket = document.getElementById('ticketCaptura');
-        const elementosNoCaptura = document.querySelectorAll('.no-captura');
-        elementosNoCaptura.forEach(el => el.style.display = 'none');
+        const noCaptura = document.querySelectorAll('.no-captura');
+        noCaptura.forEach(el => el.style.display = 'none');
 
-        html2canvas(elementoTicket, {
-            backgroundColor: "#ffffff",
-            scale: 2, 
-            logging: false
-        }).then(canvas => {
-            elementosNoCaptura.forEach(el => el.style.display = '');
+        html2canvas(elementoTicket, { backgroundColor: "#ffffff", scale: 2, logging: false }).then(canvas => {
+            noCaptura.forEach(el => el.style.display = '');
             const link = document.createElement('a');
             link.download = `Cotizacion_${Date.now()}.png`;
             link.href = canvas.toDataURL('image/png');
             link.click();
-        }).catch(err => {
+        }).catch(() => {
             alert("Error al generar la imagen");
-            elementosNoCaptura.forEach(el => el.style.display = '');
+            noCaptura.forEach(el => el.style.display = '');
         });
     }
 
+    // ── SERVICE WORKER ──
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('./sw.js');

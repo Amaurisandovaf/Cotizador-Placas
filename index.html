@@ -303,7 +303,8 @@
         }
 
         // Fórmula: (precioMaterial/6) + precioRosca + precioDobles
-        const precioMaterialUnitario = (precioMaterial6m / 6) * (largoCm / 100);
+        const totalCm = largoCm + doblesCm;
+        const precioMaterialUnitario = (precioMaterial6m / 6) * (totalCm / 100);
         const precioNetoUnitario = precioMaterialUnitario + precioTuerca + precioDobles;
         const precioNeto = precioNetoUnitario * cantidad;
         const precioConIva = precioNeto * 1.16;

@@ -3,41 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cotizador - Torneria JRM</title>
+    <title>Cotizador de Placas y Anclas</title>
     <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#007bff">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfXjLaqADZu1f17ZOClxktUMIJuU672DNGbSESUqM6Y3TSLiXSGOUpFQ2eYKjSQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>
         * { box-sizing: border-box; font-family: sans-serif; }
         body { background-color: #f4f6f9; margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; }
-
-        /* ── TABS ── */
-        .tabs { display: flex; width: 100%; max-width: 480px; margin-bottom: 0; border-radius: 12px 12px 0 0; overflow: hidden; }
-        .tab-btn { flex: 1; padding: 13px; font-size: 15px; font-weight: bold; border: none; cursor: pointer; background: #dde1e7; color: #555; transition: background .2s; }
-        .tab-btn.active { background: #007bff; color: #fff; }
-        .tab-btn:first-child { border-radius: 12px 0 0 0; }
-        .tab-btn:last-child  { border-radius: 0 12px 0 0; }
-
-        .card { background: white; padding: 20px; border-radius: 0 0 12px 12px; width: 100%; max-width: 480px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        .tab-panel { display: none; }
-        .tab-panel.active { display: block; }
-
+        .card { background: white; padding: 20px; border-radius: 12px; width: 100%; max-width: 480px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
         h2 { text-align: center; color: #333; margin-top: 0; margin-bottom: 5px; }
         .subtitle { text-align: center; color: #666; font-size: 14px; margin-bottom: 20px; }
+        
+        /* Estilos del Sistema de Pestañas */
+        .tabs { display: flex; gap: 5px; margin-bottom: 15px; background: #eee; padding: 5px; border-radius: 8px; }
+        .tab-btn { flex: 1; border: none; padding: 10px; font-size: 15px; font-weight: bold; border-radius: 6px; cursor: pointer; background: transparent; color: #555; transition: 0.2s; }
+        .tab-btn.active { background: #007bff; color: white; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
         label { display: block; margin: 12px 0 5px; font-weight: bold; color: #555; }
         select, input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; outline: none; }
         select:focus, input:focus { border-color: #007bff; }
         .row { display: flex; gap: 10px; }
         .row div { flex: 1; }
-
-        .btn-add  { width: 100%; background-color: #007bff; color: white; border: none; padding: 14px; border-radius: 8px; font-size: 16px; font-weight: bold; margin-top: 15px; cursor: pointer; }
-        .btn-add:active  { background-color: #0056b3; }
-        .btn-add-ancla { width: 100%; background-color: #6f42c1; color: white; border: none; padding: 14px; border-radius: 8px; font-size: 16px; font-weight: bold; margin-top: 15px; cursor: pointer; }
-        .btn-add-ancla:active { background-color: #4e2d8e; }
+        
+        .btn-add { width: 100%; background-color: #007bff; color: white; border: none; padding: 14px; border-radius: 8px; font-size: 16px; font-weight: bold; margin-top: 15px; cursor: pointer; }
+        .btn-add:active { background-color: #0056b3; }
+        
         .btn-reset { width: 100%; background-color: #dc3545; color: white; border: none; padding: 12px; border-radius: 8px; font-size: 15px; font-weight: bold; margin-top: 15px; cursor: pointer; }
         .btn-reset:active { background-color: #bd2130; }
+
         .btn-screenshot { width: 100%; background-color: #28a745; color: white; border: none; padding: 14px; border-radius: 8px; font-size: 16px; font-weight: bold; margin-top: 15px; cursor: pointer; }
         .btn-screenshot:active { background-color: #1e7e34; }
+
         .btn-del { background: none; border: none; color: #dc3545; cursor: pointer; font-size: 16px; padding: 0 5px; }
 
         .results { margin-top: 25px; background: #e9ecef; padding: 15px; border-radius: 8px; display: none; width: 100%; }
@@ -45,51 +43,48 @@
         .logo-container { display: flex; align-items: center; justify-content: center; width: 100%; max-width: 280px; margin: 5px auto 15px; background: #ffffff; }
         .logo-container svg { width: 100%; height: auto; display: block; }
 
-        /* ── TICKET ── */
         .ticket-container { background: white; padding: 30px 25px; border-radius: 0; width: 100%; max-width: 440px; margin: 15px auto; box-shadow: 0 0 5px rgba(0,0,0,0.05); }
         .ticket-header { border-bottom: 2px solid #333; padding-bottom: 12px; margin-bottom: 15px; }
         .ticket-date { font-size: 13px; color: #555; margin-top: 8px; text-align: center; }
+        
         .tabla-ticket { width: 100%; border-collapse: collapse; margin-top: 10px; }
         .tabla-ticket th { border-bottom: 2px solid #333; padding: 8px 4px; text-align: left; font-size: 13px; color: #111; text-transform: uppercase; }
         .tabla-ticket td { padding: 10px 4px; border-bottom: 1px dashed #bbb; font-size: 13px; color: #333; vertical-align: middle; }
+        
         .ticket-summary { margin-top: 20px; padding-top: 10px; }
         .ticket-line { font-size: 14px; margin: 6px 0; color: #333; display: flex; justify-content: space-between; }
         .ticket-line.total { font-size: 19px; font-weight: bold; border-top: 2px solid #333; padding-top: 8px; margin-top: 10px; color: #000; }
-
-        /* ── ANCLAS badge ── */
-        .badge-ancla { display: inline-block; background: #6f42c1; color: #fff; font-size: 10px; border-radius: 4px; padding: 1px 5px; margin-left: 4px; vertical-align: middle; }
     </style>
 </head>
 <body>
 
-<!-- TABS -->
-<div class="tabs">
-    <button class="tab-btn active" onclick="cambiarTab('placas')">🔩 Placas</button>
-    <button class="tab-btn" onclick="cambiarTab('anclas')">⚓ Anclas</button>
-</div>
-
 <div class="card">
-
-    <!-- ══════════════ TAB PLACAS ══════════════ -->
-    <div id="tab-placas" class="tab-panel active">
-        <div class="logo-container">
-            <svg viewBox="0 0 280 60" xmlns="http://www.w3.org/2000/svg">
-                <rect width="100%" height="100%" fill="#ffffff"/>
-                <g transform="translate(12, -2) scale(0.72)">
-                    <g transform="matrix(0.866, 0.5, -0.866, 0.5, 45, 10)">
-                        <polygon points="0,0 28,0 28,28 0,28" fill="#812671" />
-                        <polygon points="28,0 56,0 56,28 28,28" fill="#9F367A" />
-                        <polygon points="56,0 56,28 56,56 28,56" fill="#BD4A8D" />
-                        <polygon points="0,28 28,28 28,56 0,56" fill="#F3921E" />
-                        <polygon points="0,56 28,56 28,84 0,84" fill="#E36B25" />
-                        <polygon points="28,56 56,56 56,84 28,84" fill="#FAB813" />
-                    </g>
+    <div class="logo-container">
+        <svg viewBox="0 0 280 60" xmlns="http://www.w3.org/2000/svg">
+            <rect width="100%" height="100%" fill="#ffffff"/>
+            <g transform="translate(12, -2) scale(0.72)">
+                <g transform="matrix(0.866, 0.5, -0.866, 0.5, 45, 10)">
+                    <polygon points="0,0 28,0 28,28 0,28" fill="#812671" />
+                    <polygon points="28,0 56,0 56,28 28,28" fill="#9F367A" />
+                    <polygon points="56,0 56,28 56,56 28,56" fill="#BD4A8D" />
+                    <polygon points="0,28 28,28 28,56 0,56" fill="#F3921E" />
+                    <polygon points="0,56 28,56 28,84 0,84" fill="#E36B25" />
+                    <polygon points="28,56 56,56 56,84 28,84" fill="#FAB813" />
                 </g>
-                <text x="100" y="38" font-family="sans-serif" font-size="21" font-weight="bold" fill="#000000">Torneria JRM</text>
-            </svg>
-        </div>
-        <div class="subtitle">Agrega las placas que necesites a la nota</div>
+            </g>
+            <text x="100" y="38" font-family="sans-serif" font-size="21" font-weight="bold" fill="#000000">Torneria JRM</text>
+        </svg>
+    </div>
+    
+    <div class="subtitle">Agrega las piezas que necesites a la nota</div>
+    
+    <div class="tabs">
+        <button class="tab-btn active" onclick="cambiarPestaña('tab-placas', event)">Placas</button>
+        <button class="tab-btn" onclick="cambiarPestaña('tab-anclas', event)">Anclas</button>
+    </div>
 
+    <!-- PESTAÑA DE PLACAS -->
+    <div id="tab-placas" class="tab-content active">
         <label for="placa">Espesor de Placa:</label>
         <select id="placa">
             <option value="1250" data-pulgadas="0.0625">1/16 pulgada ($1,250)</option>
@@ -121,60 +116,53 @@
             </div>
         </div>
 
-        <label for="cantidad">Cantidad:</label>
+        <!-- NUEVOS CAMPOS DE AGUJEROS / PERFORACIONES -->
+        <div class="row">
+            <div>
+                <label for="agujeros">Cant. Agujeros:</label>
+                <input type="number" id="agujeros" value="0" min="0" step="1">
+            </div>
+            <div>
+                <label for="precioAgujero">Precio c/u ($):</label>
+                <input type="number" id="precioAgujero" value="25" min="0" step="1">
+            </div>
+        </div>
+
+        <label for="cantidad">Cantidad de placas:</label>
         <input type="number" id="cantidad" value="1" min="1" step="1">
 
-        <button class="btn-add" onclick="agregarPlaca()">+ Agregar Placa a la Cotización</button>
+        <button class="btn-add" onclick="agregarPlaca()">+ Agregar Placa</button>
     </div>
 
-    <!-- ══════════════ TAB ANCLAS ══════════════ -->
-    <div id="tab-anclas" class="tab-panel">
-        <div class="logo-container">
-            <svg viewBox="0 0 280 60" xmlns="http://www.w3.org/2000/svg">
-                <rect width="100%" height="100%" fill="#ffffff"/>
-                <g transform="translate(12, -2) scale(0.72)">
-                    <g transform="matrix(0.866, 0.5, -0.866, 0.5, 45, 10)">
-                        <polygon points="0,0 28,0 28,28 0,28" fill="#812671" />
-                        <polygon points="28,0 56,0 56,28 28,28" fill="#9F367A" />
-                        <polygon points="56,0 56,28 56,56 28,56" fill="#BD4A8D" />
-                        <polygon points="0,28 28,28 28,56 0,56" fill="#F3921E" />
-                        <polygon points="0,56 28,56 28,84 0,84" fill="#E36B25" />
-                        <polygon points="28,56 56,56 56,84 28,84" fill="#FAB813" />
-                    </g>
-                </g>
-                <text x="100" y="38" font-family="sans-serif" font-size="21" font-weight="bold" fill="#000000">Torneria JRM</text>
-            </svg>
-        </div>
-        <div class="subtitle">Agrega las anclas que necesites a la nota</div>
-
-        <label for="ancla-grosor">Grosor del Varilla:</label>
-        <select id="ancla-grosor">
-            <!-- value = precio material por 6m | data-dobles = precio dobles | data-tuerca = precio tuerca -->
-            <option value="300" data-dobles="10" data-tuerca="35">1/2 pulgada</option>
-            <option value="400" data-dobles="20" data-tuerca="40">5/8 pulgada</option>
-            <option value="500" data-dobles="30" data-tuerca="50">3/4 pulgada</option>
-            <option value="850" data-dobles="50" data-tuerca="100">1 pulgada</option>
-            <option value="1500" data-dobles="100" data-tuerca="150">1 1/4 pulgada</option>
+    <!-- PESTAÑA DE ANCLAS -->
+    <div id="tab-anclas" class="tab-content">
+        <label for="anclaGrosor">Grosor de Ancla:</label>
+        <select id="anclaGrosor">
+            <option value="300" data-doblez="10" data-tuerca="35">1/2 pulgada</option>
+            <option value="400" data-doblez="20" data-tuerca="40">5/8 pulgada</option>
+            <option value="500" data-doblez="30" data-tuerca="50">3/4 pulgada</option>
+            <option value="850" data-doblez="50" data-tuerca="100">1 pulgada</option>
+            <option value="1500" data-doblez="100" data-tuerca="150">1 1/4 pulgada</option>
         </select>
 
-        <label for="ancla-largo">Largo de la ancla (cm):</label>
-        <input type="number" id="ancla-largo" placeholder="ej. 30">
+        <div class="row">
+            <div>
+                <label for="anclaLargo">Largo (cm):</label>
+                <input type="number" id="anclaLargo" placeholder="ej. 50">
+            </div>
+            <div>
+                <label for="anclaDoblez">Doblez (cm):</label>
+                <input type="number" id="anclaDoblez" placeholder="ej. 10">
+            </div>
+        </div>
 
-        <label for="ancla-dobles">Doblés (cm):</label>
-        <input type="number" id="ancla-dobles" placeholder="ej. 10">
+        <label for="anclaCantidad">Cantidad:</label>
+        <input type="number" id="anclaCantidad" value="1" min="1" step="1">
 
-        <label for="ancla-rosca">Rosca (cm):</label>
-        <input type="number" id="ancla-rosca" placeholder="ej. 5">
-
-        <label for="ancla-cantidad">Cantidad:</label>
-        <input type="number" id="ancla-cantidad" value="1" min="1" step="1">
-
-        <button class="btn-add-ancla" onclick="agregarAncla()">⚓ Agregar Ancla a la Cotización</button>
+        <button class="btn-add" onclick="agregarAncla()">+ Agregar Ancla</button>
     </div>
-
 </div>
 
-<!-- ══════════════ RESULTADOS ══════════════ -->
 <div id="results" class="results">
     <div id="ticketCaptura" class="ticket-container">
         <div class="ticket-header">
@@ -196,150 +184,163 @@
             </div>
             <div class="ticket-date" id="ticketFecha">Fecha: --/--/----</div>
         </div>
-
+        
         <table class="tabla-ticket">
             <thead>
                 <tr>
                     <th>Concepto</th>
-                    <th>Detalle</th>
-                    <th style="text-align:center;">Cant</th>
-                    <th style="text-align:right;">Total</th>
-                    <th class="no-captura" style="text-align:center;">Borr</th>
+                    <th>Medidas</th>
+                    <th style="text-align: center;">Cant</th>
+                    <th style="text-align: right;">Total</th>
+                    <th class="no-captura" style="text-align: center;">Borr</th>
                 </tr>
             </thead>
-            <tbody id="listaItems"></tbody>
+            <tbody id="listaItems">
+            </tbody>
         </table>
 
         <div class="ticket-summary">
-            <div class="ticket-line"><span style="color:#777;">Peso Est. Total:</span><span id="resPeso" style="font-weight:bold;">0.00 kg</span></div>
-            <div class="ticket-line"><span>Subtotal:</span><span id="resPrecio" style="font-weight:bold;">$0.00</span></div>
-            <div class="ticket-line"><span>IVA (16%):</span><span id="resIva" style="font-weight:bold;">$0.00</span></div>
+            <div class="ticket-line"><span style="color:#777;">Peso Est. Placas:</span><span id="resPeso" style="font-weight: bold;">0.00 kg</span></div>
+            <div class="ticket-line"><span>Subtotal:</span><span id="resPrecio" style="font-weight: bold;">$0.00</span></div>
+            <div class="ticket-line"><span>IVA (16%):</span><span id="resIva" style="font-weight: bold;">$0.00</span></div>
             <div class="ticket-line total"><span>TOTAL:</span><span id="resRedondeado">$0.00</span></div>
         </div>
     </div>
-
+    
     <button class="btn-screenshot" onclick="descargarTicketImagen()">📸 Descargar como Captura / Imagen</button>
     <button class="btn-reset" onclick="reiniciarProceso()">🗑️ Limpiar / Nueva Cotización</button>
 </div>
 
 <script>
-    const AREA_HOJA_ESTANDAR = 3.721;
-    const FACTOR_PESO_REAL = 750 / AREA_HOJA_ESTANDAR;
-
+    const AREA_HOJA_ESTANDAR = 3.721; 
+    const FACTOR_PESO_REAL = 750 / AREA_HOJA_ESTANDAR; 
+    
     let listaCotizaciones = [];
 
-    // ── TABS ──
-    function cambiarTab(tab) {
-        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById('tab-' + tab).classList.add('active');
-        event.target.classList.add('active');
+    function cambiarPestaña(tabId, event) {
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        
+        document.getElementById(tabId).classList.add('active');
+        event.currentTarget.classList.add('active');
     }
 
-    // ── AGREGAR PLACA ──
     function agregarPlaca() {
         const selectPlaca = document.getElementById('placa');
-        const opcion = selectPlaca.options[selectPlaca.selectedIndex];
-
-        const nombrePlaca = opcion.text.split(' ($')[0];
-        const precioHoja = parseFloat(opcion.value);
-        const pulgadas = parseFloat(opcion.getAttribute('data-pulgadas'));
-
+        const opcionSeleccionada = selectPlaca.options[selectPlaca.selectedIndex];
+        
+        const nombrePlaca = "Placa " + opcionSeleccionada.text.split(' ($')[0];
+        const precioHoja = parseFloat(opcionSeleccionada.value);
+        const pulgadas = parseFloat(opcionSeleccionada.getAttribute('data-pulgadas'));
+        
         const largoCm = parseFloat(document.getElementById('largo').value);
         const anchoCm = parseFloat(document.getElementById('ancho').value);
         const cantidad = parseInt(document.getElementById('cantidad').value);
+        
+        const cantAgujeros = parseInt(document.getElementById('agujeros').value) || 0;
+        const costoPorAgujero = parseFloat(document.getElementById('precioAgujero').value) || 0;
 
         if (isNaN(largoCm) || isNaN(anchoCm) || largoCm <= 0 || anchoCm <= 0 || isNaN(cantidad) || cantidad <= 0) {
             alert("Por favor, ingresa medidas y cantidades válidas antes de agregar.");
             return;
         }
 
-        const largoM = largoCm / 100;
-        const anchoM = anchoCm / 100;
-        const areaPieza = largoM * anchoM;
-        const pesoUnitario = areaPieza * pulgadas * FACTOR_PESO_REAL;
-        const pesoTotal = pesoUnitario * cantidad;
+        const largoMetros = largoCm / 100;
+        const anchoMetros = anchoCm / 100;
 
-        const costoBase = (precioHoja / AREA_HOJA_ESTANDAR) * areaPieza;
-        const precioNeto = (costoBase * 2) * cantidad;
-        const precioConIva = precioNeto * 1.16;
-        const precioRedondeado = Math.round(precioConIva);
+        const areaPieza = largoMetros * anchoMetros;
+        const pesoUnitario = areaPieza * pulgadas * FACTOR_PESO_REAL;
+        const pesoTotalPartida = pesoUnitario * cantidad;
+
+        // Costo base del material multiplicado x2 + costo total de agujeros de esa pieza
+        const costoBasePieza = (precioHoja / AREA_HOJA_ESTANDAR) * areaPieza;
+        const costoAgujerosPieza = cantAgujeros * costoPorAgujero;
+        
+        const precioNetoPartida = ((costoBasePieza * 2) + costoAgujerosPieza) * cantidad;
+        const precioConIvaPartida = precioNetoPartida * 1.16;
+        const precioRedondeadoPartida = Math.round(precioConIvaPartida);
+
+        // Texto descriptivo para el ticket
+        let detalleMedidas = `${largoCm}x${anchoCm} cm`;
+        if (cantAgujeros > 0) {
+            detalleMedidas += ` (${cantAgujeros} aguj.)`;
+        }
 
         listaCotizaciones.push({
-            tipo: 'placa',
             concepto: nombrePlaca,
-            detalle: largoCm + "x" + anchoCm + " cm",
-            cantidad,
-            peso: pesoTotal,
-            precioNeto,
-            precioConIva,
-            precioRedondeado
+            cantidad: cantidad,
+            medidas: detalleMedidas,
+            peso: pesoTotalPartida,
+            precioNeto: precioNetoPartida,
+            precioConIva: precioConIvaPartida,
+            precioRedondeado: precioRedondeadoPartida
         });
 
+        // Limpiar formulario de placa
         document.getElementById('largo').value = "";
         document.getElementById('ancho').value = "";
+        document.getElementById('agujeros').value = "0";
+        document.getElementById('precioAgujero').value = "25";
         document.getElementById('cantidad').value = "1";
+
         renderizarInterfaz();
     }
 
-    // ── AGREGAR ANCLA ──
     function agregarAncla() {
-        const selectAncla = document.getElementById('ancla-grosor');
-        const opcion = selectAncla.options[selectAncla.selectedIndex];
+        const selectAncla = document.getElementById('anclaGrosor');
+        const opcionSeleccionada = selectAncla.options[selectAncla.selectedIndex];
+        
+        const nombreAncla = "Ancla " + opcionSeleccionada.text;
+        const precioSeisMetros = parseFloat(opcionSeleccionada.value);
+        const costoDoblez = parseFloat(opcionSeleccionada.getAttribute('data-doblez'));
+        const costoTuerca = parseFloat(opcionSeleccionada.getAttribute('data-tuerca'));
+        
+        const largoCm = parseFloat(document.getElementById('anclaLargo').value);
+        const doblezCm = parseFloat(document.getElementById('anclaDoblez').value);
+        const cantidad = parseInt(document.getElementById('anclaCantidad').value);
 
-        const nombreGrosor = opcion.text;
-        const precioMaterial6m = parseFloat(opcion.value);
-        const precioDobles = parseFloat(opcion.getAttribute('data-dobles'));
-        const precioTuerca = parseFloat(opcion.getAttribute('data-tuerca'));
-
-        const largoCm = parseFloat(document.getElementById('ancla-largo').value);
-        const doblesCm = parseFloat(document.getElementById('ancla-dobles').value);
-        const roscaCm = parseFloat(document.getElementById('ancla-rosca').value);
-        const cantidad = parseInt(document.getElementById('ancla-cantidad').value);
-
-        if (isNaN(largoCm) || largoCm <= 0 || isNaN(doblesCm) || doblesCm <= 0 || isNaN(roscaCm) || roscaCm <= 0 || isNaN(cantidad) || cantidad <= 0) {
-            alert("Por favor, ingresa largo, doblés, rosca y cantidad válidos antes de agregar.");
+        if (isNaN(largoCm) || isNaN(doblezCm) || largoCm <= 0 || doblezCm < 0 || isNaN(cantidad) || cantidad <= 0) {
+            alert("Por favor, ingresa un largo, doblez y cantidad válidos.");
             return;
         }
 
-        // Fórmula: (precioMaterial/6) + precioRosca + precioDobles
-        const totalCm = largoCm + doblesCm;
-        const precioMaterialUnitario = (precioMaterial6m / 6) * (totalCm / 100);
-        const precioNetoUnitario = precioMaterialUnitario + precioTuerca + precioDobles;
-        const precioNeto = precioNetoUnitario * cantidad;
-        const precioConIva = precioNeto * 1.16;
-        const precioRedondeado = Math.round(precioConIva);
+        const longitudTotalMetros = (largoCm + doblezCm) / 100;
+        const precioPorMetro = precioSeisMetros / 6;
+        
+        const costoMaterialPieza = precioPorMetro * longitudTotalMetros;
+        const precioNetoUnitario = costoMaterialPieza + costoTuerca + costoDoblez;
+        
+        const precioNetoPartida = precioNetoUnitario * cantidad;
+        const precioConIvaPartida = precioNetoPartida * 1.16;
+        const precioRedondeadoPartida = Math.round(precioConIvaPartida);
 
         listaCotizaciones.push({
-            tipo: 'ancla',
-            concepto: 'Ancla ' + nombreGrosor,
-            detalle: largoCm + "cm largo / " + doblesCm + "cm doblés / " + roscaCm + "cm rosca",
-            cantidad,
-            peso: 0, // anclas no calculan peso estimado
-            precioNeto,
-            precioConIva,
-            precioRedondeado
+            concepto: nombreAncla,
+            cantidad: cantidad,
+            medidas: `L:${largoCm} D:${doblezCm} cm`,
+            peso: 0,
+            precioNeto: precioNetoPartida,
+            precioConIva: precioConIvaPartida,
+            precioRedondeado: precioRedondeadoPartida
         });
 
-        document.getElementById('ancla-largo').value = "";
-        document.getElementById('ancla-dobles').value = "";
-        document.getElementById('ancla-rosca').value = "";
-        document.getElementById('ancla-cantidad').value = "1";
+        document.getElementById('anclaLargo').value = "";
+        document.getElementById('anclaDoblez').value = "";
+        document.getElementById('anclaCantidad').value = "1";
+
         renderizarInterfaz();
     }
 
-    // ── ELIMINAR ──
-    function eliminarItem(index) {
+    function eliminarPlaca(index) {
         listaCotizaciones.splice(index, 1);
         renderizarInterfaz();
     }
 
-    // ── RENDERIZAR ──
     function renderizarInterfaz() {
         document.getElementById('ticketFecha').innerText = "Fecha: " + new Date().toLocaleDateString('es-MX');
-
+        
         const tabla = document.getElementById('listaItems');
-        tabla.innerHTML = "";
+        tabla.innerHTML = ""; 
 
         let acumuladoPeso = 0;
         let acumuladoNeto = 0;
@@ -352,53 +353,55 @@
             acumuladoIva += item.precioConIva;
             acumuladoRedondeado += item.precioRedondeado;
 
-            const badge = item.tipo === 'ancla' ? '<span class="badge-ancla">ancla</span>' : '';
             const fila = document.createElement('tr');
             fila.innerHTML = `
-                <td>${item.concepto}${badge}</td>
-                <td>${item.detalle}</td>
-                <td style="text-align:center;">${item.cantidad}</td>
-                <td style="text-align:right;"><strong>$${item.precioRedondeado.toLocaleString('es-MX')}</strong></td>
-                <td class="no-captura" style="text-align:center;"><button class="btn-del" onclick="eliminarItem(${index})">🗑️</button></td>
+                <td>${item.concepto}</td>
+                <td>${item.medidas}</td>
+                <td style="text-align: center;">${item.cantidad}</td>
+                <td style="text-align: right;"><strong>$${item.precioRedondeado.toLocaleString('es-MX')}</strong></td>
+                <td class="no-captura" style="text-align: center;"><button class="btn-del" onclick="eliminarPlaca(${index})">🗑️</button></td>
             `;
             tabla.appendChild(fila);
         });
 
-        const ivaOnly = acumuladoIva - acumuladoNeto;
+        let totalIvaSolo = acumuladoIva - acumuladoNeto;
 
         document.getElementById('resPeso').innerText = acumuladoPeso.toFixed(2) + " kg";
-        document.getElementById('resPrecio').innerText = "$" + acumuladoNeto.toLocaleString('es-MX', {minimumFractionDigits:2, maximumFractionDigits:2});
-        document.getElementById('resIva').innerText = "$" + ivaOnly.toLocaleString('es-MX', {minimumFractionDigits:2, maximumFractionDigits:2});
-        document.getElementById('resRedondeado').innerText = "$" + acumuladoRedondeado.toLocaleString('es-MX', {minimumFractionDigits:2, maximumFractionDigits:2});
+        document.getElementById('resPrecio').innerText = "$" + acumuladoNeto.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        document.getElementById('resIva').innerText = "$" + totalIvaSolo.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        document.getElementById('resRedondeado').innerText = "$" + acumuladoRedondeado.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
         document.getElementById('results').style.display = listaCotizaciones.length > 0 ? 'block' : 'none';
     }
 
-    // ── REINICIAR ──
     function reiniciarProceso() {
-        listaCotizaciones = [];
-        renderizarInterfaz();
+        if(confirm("¿Estás seguro de borrar todo para una nueva cotización?")) {
+            listaCotizaciones = [];
+            renderizarInterfaz();
+        }
     }
 
-    // ── SCREENSHOT ──
     function descargarTicketImagen() {
         const elementoTicket = document.getElementById('ticketCaptura');
-        const noCaptura = document.querySelectorAll('.no-captura');
-        noCaptura.forEach(el => el.style.display = 'none');
+        const elementosNoCaptura = document.querySelectorAll('.no-captura');
+        elementosNoCaptura.forEach(el => el.style.display = 'none');
 
-        html2canvas(elementoTicket, { backgroundColor: "#ffffff", scale: 2, logging: false }).then(canvas => {
-            noCaptura.forEach(el => el.style.display = '');
+        html2canvas(elementoTicket, {
+            backgroundColor: "#ffffff",
+            scale: 2, 
+            logging: false
+        }).then(canvas => {
+            elementosNoCaptura.forEach(el => el.style.display = '');
             const link = document.createElement('a');
             link.download = `Cotizacion_${Date.now()}.png`;
             link.href = canvas.toDataURL('image/png');
             link.click();
-        }).catch(() => {
+        }).catch(err => {
             alert("Error al generar la imagen");
-            noCaptura.forEach(el => el.style.display = '');
+            elementosNoCaptura.forEach(el => el.style.display = '');
         });
     }
 
-    // ── SERVICE WORKER ──
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('./sw.js');

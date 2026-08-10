@@ -54,6 +54,10 @@
         .ticket-summary { margin-top: 20px; padding-top: 10px; }
         .ticket-line { font-size: 14px; margin: 6px 0; color: #333; display: flex; justify-content: space-between; }
         .ticket-line.total { font-size: 19px; font-weight: bold; border-top: 2px solid #333; padding-top: 8px; margin-top: 10px; color: #000; }
+
+        /* Estilo Sutil para Datos Bancarios en el Ticket */
+        .ticket-bank-info { margin-top: 20px; padding-top: 12px; border-top: 1px dashed #ccc; text-align: center; color: #555; font-size: 11px; line-height: 1.4; }
+        .ticket-bank-title { font-weight: bold; font-size: 11px; color: #444; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
     </style>
 </head>
 <body>
@@ -116,7 +120,7 @@
             </div>
         </div>
 
-        <!-- NUEVOS CAMPOS DE AGUJEROS / PERFORACIONES -->
+        <!-- CAMPOS DE AGUJEROS / PERFORACIONES -->
         <div class="row">
             <div>
                 <label for="agujeros">Cant. Agujeros:</label>
@@ -205,6 +209,14 @@
             <div class="ticket-line"><span>IVA (16%):</span><span id="resIva" style="font-weight: bold;">$0.00</span></div>
             <div class="ticket-line total"><span>TOTAL:</span><span id="resRedondeado">$0.00</span></div>
         </div>
+
+        <!-- SECCIÓN SUTIL DE DATOS BANCARIOS -->
+        <div class="ticket-bank-info">
+            <div class="ticket-bank-title">Datos para Transferencia</div>
+            <div><strong>Bancomer</strong> — Peter Gael Rivera Carballo</div>
+            <div><strong>CLABE:</strong> 012 910 00485105765 8</div>
+            <div><strong>Cuenta:</strong> 048 510 5765</div>
+        </div>
     </div>
     
     <button class="btn-screenshot" onclick="descargarTicketImagen()">📸 Descargar como Captura / Imagen</button>
@@ -252,7 +264,6 @@
         const pesoUnitario = areaPieza * pulgadas * FACTOR_PESO_REAL;
         const pesoTotalPartida = pesoUnitario * cantidad;
 
-        // Costo base del material multiplicado x2 + costo total de agujeros de esa pieza
         const costoBasePieza = (precioHoja / AREA_HOJA_ESTANDAR) * areaPieza;
         const costoAgujerosPieza = cantAgujeros * costoPorAgujero;
         
@@ -260,7 +271,6 @@
         const precioConIvaPartida = precioNetoPartida * 1.16;
         const precioRedondeadoPartida = Math.round(precioConIvaPartida);
 
-        // Texto descriptivo para el ticket
         let detalleMedidas = `${largoCm}x${anchoCm} cm`;
         if (cantAgujeros > 0) {
             detalleMedidas += ` (${cantAgujeros} aguj.)`;
@@ -276,7 +286,6 @@
             precioRedondeado: precioRedondeadoPartida
         });
 
-        // Limpiar formulario de placa
         document.getElementById('largo').value = "";
         document.getElementById('ancho').value = "";
         document.getElementById('agujeros').value = "0";

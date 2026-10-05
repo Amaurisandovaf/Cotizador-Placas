@@ -91,22 +91,22 @@
     <div id="tab-placas" class="tab-content active">
         <label for="placa">Espesor de Placa:</label>
         <select id="placa">
-            <option value="1250" data-pulgadas="0.0625">1/16 pulgada ($1,250)</option>
-            <option value="2500" data-pulgadas="0.125">1/8 pulgada ($2,500)</option>
-            <option value="3750" data-pulgadas="0.1875">3/16 pulgada ($3,750)</option>
-            <option value="5000" data-pulgadas="0.25">1/4 pulgada ($5,000)</option>
-            <option value="6250" data-pulgadas="0.3125">5/16 pulgada ($6,250)</option>
-            <option value="7500" data-pulgadas="0.375">3/8 pulgada ($7,500)</option>
-            <option value="8750" data-pulgadas="0.4375">7/16 pulgada ($8,750)</option>
-            <option value="10000" data-pulgadas="0.5">1/2 pulgada ($10,000)</option>
-            <option value="11250" data-pulgadas="0.5625">9/16 pulgada ($11,250)</option>
-            <option value="12500" data-pulgadas="0.625">5/8 pulgada ($12,500)</option>
-            <option value="13750" data-pulgadas="0.6875">11/16 pulgada ($13,750)</option>
-            <option value="15000" data-pulgadas="0.75">3/4 pulgada ($15,000)</option>
-            <option value="16250" data-pulgadas="0.8125">13/16 pulgada ($16,250)</option>
-            <option value="17500" data-pulgadas="0.875">7/8 pulgada ($17,500)</option>
-            <option value="18750" data-pulgadas="0.9375">15/16 pulgada ($18,750)</option>
-            <option value="20000" data-pulgadas="1.0">1 pulgada ($20,000)</option>
+            <option value="1450" data-pulgadas="0.0625">1/16 pulgada ($1,450)</option>
+            <option value="2900" data-pulgadas="0.125">1/8 pulgada ($2,900)</option>
+            <option value="4350" data-pulgadas="0.1875">3/16 pulgada ($4,350)</option>
+            <option value="5800" data-pulgadas="0.25">1/4 pulgada ($5,800)</option>
+            <option value="7250" data-pulgadas="0.3125">5/16 pulgada ($7,250)</option>
+            <option value="8700" data-pulgadas="0.375">3/8 pulgada ($8,700)</option>
+            <option value="10150" data-pulgadas="0.4375">7/16 pulgada ($10,150)</option>
+            <option value="11600" data-pulgadas="0.5">1/2 pulgada ($11,600)</option>
+            <option value="13050" data-pulgadas="0.5625">9/16 pulgada ($13,050)</option>
+            <option value="14500" data-pulgadas="0.625">5/8 pulgada ($14,500)</option>
+            <option value="15950" data-pulgadas="0.6875">11/16 pulgada ($15,950)</option>
+            <option value="17400" data-pulgadas="0.75">3/4 pulgada ($17,400)</option>
+            <option value="18850" data-pulgadas="0.8125">13/16 pulgada ($18,850)</option>
+            <option value="20300" data-pulgadas="0.875">7/8 pulgada ($20,300)</option>
+            <option value="21750" data-pulgadas="0.9375">15/16 pulgada ($21,750)</option>
+            <option value="23200" data-pulgadas="1.0">1 pulgada ($23,200)</option>
         </select>
 
         <div class="row">
@@ -120,6 +120,7 @@
             </div>
         </div>
 
+        <!-- CAMPOS DE AGUJEROS (+16% -> $29) -->
         <div class="row">
             <div>
                 <label for="agujeros">Cant. Agujeros:</label>
@@ -127,7 +128,7 @@
             </div>
             <div>
                 <label for="precioAgujero">Precio c/u ($):</label>
-                <input type="number" id="precioAgujero" value="25" min="0" step="1">
+                <input type="number" id="precioAgujero" value="29" min="0" step="1">
             </div>
         </div>
 
@@ -137,15 +138,15 @@
         <button class="btn-add" onclick="agregarPlaca()">+ Agregar Placa</button>
     </div>
 
-    <!-- PESTAÑA DE ANCLAS -->
+    <!-- PESTAÑA DE ANCLAS (+16% en material, doblez y tuerca) -->
     <div id="tab-anclas" class="tab-content">
         <label for="anclaGrosor">Grosor de Ancla:</label>
         <select id="anclaGrosor">
-            <option value="300" data-doblez="10" data-tuerca="35">1/2 pulgada</option>
-            <option value="400" data-doblez="20" data-tuerca="40">5/8 pulgada</option>
-            <option value="500" data-doblez="30" data-tuerca="50">3/4 pulgada</option>
-            <option value="850" data-doblez="50" data-tuerca="100">1 pulgada</option>
-            <option value="1500" data-doblez="100" data-tuerca="150">1 1/4 pulgada</option>
+            <option value="348" data-doblez="11.6" data-tuerca="40.6">1/2 pulgada</option>
+            <option value="464" data-doblez="23.2" data-tuerca="46.4">5/8 pulgada</option>
+            <option value="580" data-doblez="34.8" data-tuerca="58">3/4 pulgada</option>
+            <option value="986" data-doblez="58" data-tuerca="116">1 pulgada</option>
+            <option value="1740" data-doblez="116" data-tuerca="174">1 1/4 pulgada</option>
         </select>
 
         <div class="row">
@@ -162,7 +163,6 @@
         <label for="anclaCantidad">Cantidad:</label>
         <input type="number" id="anclaCantidad" value="1" min="1" step="1">
 
-        <!-- CAMPO DE PRECIO MANUAL -->
         <label for="anclaPrecioManual">Precio Unitario Manual ($) <span style="font-weight: normal; color: #888; font-size: 13px;">(Opcional)</span>:</label>
         <input type="number" id="anclaPrecioManual" placeholder="Dejar vacío para cálculo automático" min="0" step="0.5">
 
@@ -213,7 +213,6 @@
             <div class="ticket-line total"><span>TOTAL:</span><span id="resRedondeado">$0.00</span></div>
         </div>
 
-        <!-- SECCIÓN SUTIL DE DATOS BANCARIOS -->
         <div class="ticket-bank-info">
             <div class="ticket-bank-title">Datos para Transferencia</div>
             <div><strong>BBVA / Bancomer</strong> — Peter Gael Rivera Carballo</div>
@@ -293,7 +292,7 @@
         document.getElementById('largo').value = "";
         document.getElementById('ancho').value = "";
         document.getElementById('agujeros').value = "0";
-        document.getElementById('precioAgujero').value = "25";
+        document.getElementById('precioAgujero').value = "29";
         document.getElementById('cantidad').value = "1";
 
         renderizarInterfaz();
@@ -320,7 +319,6 @@
 
         let precioNetoUnitario = 0;
 
-        // Si se especificó un precio manual, se usa directamente
         if (precioManualInput !== "" && !isNaN(parseFloat(precioManualInput))) {
             precioNetoUnitario = parseFloat(precioManualInput);
         } else {

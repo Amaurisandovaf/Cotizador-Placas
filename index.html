@@ -120,7 +120,6 @@
             </div>
         </div>
 
-        <!-- CAMPOS DE AGUJEROS / PERFORACIONES -->
         <div class="row">
             <div>
                 <label for="agujeros">Cant. Agujeros:</label>
@@ -162,6 +161,10 @@
 
         <label for="anclaCantidad">Cantidad:</label>
         <input type="number" id="anclaCantidad" value="1" min="1" step="1">
+
+        <!-- CAMPO DE PRECIO MANUAL -->
+        <label for="anclaPrecioManual">Precio Unitario Manual ($) <span style="font-weight: normal; color: #888; font-size: 13px;">(Opcional)</span>:</label>
+        <input type="number" id="anclaPrecioManual" placeholder="Dejar vacío para cálculo automático" min="0" step="0.5">
 
         <button class="btn-add" onclick="agregarAncla()">+ Agregar Ancla</button>
     </div>
@@ -214,9 +217,9 @@
         <div class="ticket-bank-info">
             <div class="ticket-bank-title">Datos para Transferencia</div>
             <div><strong>BBVA / Bancomer</strong> — Peter Gael Rivera Carballo</div>
-            <div><strong>Tarjeta BBVA:</strong> 4152 3143 6276 9781</div>
-            <div><strong>CLABE Bancomer:</strong> 012 910 00485105765 8</div>
-            <div><strong>Cuenta Bancomer:</strong> 048 510 5765</div>
+            <div><strong>Tarjeta:</strong> 4152 3143 6276 9781</div>
+            <div><strong>CLABE:</strong> 012 910 00485105765 8</div>
+            <div><strong>Cuenta:</strong> 048 510 5765</div>
         </div>
     </div>
     
@@ -308,17 +311,24 @@
         const largoCm = parseFloat(document.getElementById('anclaLargo').value);
         const doblezCm = parseFloat(document.getElementById('anclaDoblez').value);
         const cantidad = parseInt(document.getElementById('anclaCantidad').value);
+        const precioManualInput = document.getElementById('anclaPrecioManual').value.trim();
 
         if (isNaN(largoCm) || isNaN(doblezCm) || largoCm <= 0 || doblezCm < 0 || isNaN(cantidad) || cantidad <= 0) {
             alert("Por favor, ingresa un largo, doblez y cantidad válidos.");
             return;
         }
 
-        const longitudTotalMetros = (largoCm + doblezCm) / 100;
-        const precioPorMetro = precioSeisMetros / 6;
-        
-        const costoMaterialPieza = precioPorMetro * longitudTotalMetros;
-        const precioNetoUnitario = costoMaterialPieza + costoTuerca + costoDoblez;
+        let precioNetoUnitario = 0;
+
+        // Si se especificó un precio manual, se usa directamente
+        if (precioManualInput !== "" && !isNaN(parseFloat(precioManualInput))) {
+            precioNetoUnitario = parseFloat(precioManualInput);
+        } else {
+            const longitudTotalMetros = (largoCm + doblezCm) / 100;
+            const precioPorMetro = precioSeisMetros / 6;
+            const costoMaterialPieza = precioPorMetro * longitudTotalMetros;
+            precioNetoUnitario = costoMaterialPieza + costoTuerca + costoDoblez;
+        }
         
         const precioNetoPartida = precioNetoUnitario * cantidad;
         const precioConIvaPartida = precioNetoPartida * 1.16;
@@ -336,6 +346,7 @@
 
         document.getElementById('anclaLargo').value = "";
         document.getElementById('anclaDoblez').value = "";
+        document.getElementById('anclaPrecioManual').value = "";
         document.getElementById('anclaCantidad').value = "1";
 
         renderizarInterfaz();
